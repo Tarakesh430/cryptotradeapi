@@ -33,17 +33,16 @@ public class CoinSwitchHealthApi implements HealthApi {
     private String baseUrl;
     @Override
     public void checkHealth() throws UnsupportedEncodingException, URISyntaxException, JsonProcessingException {
-        String signature = coinSwitchSignatureGeneration.generateSignature(HttpMethod.GET.name(),
-                getHealthApiPath(), new HashMap<>(), new HashMap<>());
-        CoinSwitchResponse response = restClient.get().uri(getHealthApiPath())
-                .header(CommonConstants.CS_AUTH_SIGNATURE, signature)
-                .header(CommonConstants.CS_AUTH_APIKEY, apiKey).retrieve().body(CoinSwitchResponse.class);
-        if(HttpStatus.OK.getReasonPhrase().equalsIgnoreCase(response.getMessage())){
-            logger.info("Coin Switch Health Good and Ready to use {}",response);
-            return;
-        }
-        logger.info("The response from CheckHealth for CoinSwitch is {}",response);
-
+//        String signature = coinSwitchSignatureGeneration.generateSignature(HttpMethod.GET.name(),
+//                getHealthApiPath(), new HashMap<>(), new HashMap<>());
+//        CoinSwitchResponse response = restClient.get().uri(getHealthApiPath())
+//                .header(CommonConstants.CS_AUTH_SIGNATURE, signature)
+//                .header(CommonConstants.CS_AUTH_APIKEY, apiKey).retrieve().body(CoinSwitchResponse.class);
+//        if(HttpStatus.OK.getReasonPhrase().equalsIgnoreCase(response.getMessage())){
+//            logger.info("Coin Switch Health Good and Ready to use {}",response);
+//            return;
+//        }
+//        logger.info("The response from CheckHealth for CoinSwitch is {}",response);
     }
 
     private String getHealthApiPath() {

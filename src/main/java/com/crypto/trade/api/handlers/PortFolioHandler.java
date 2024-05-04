@@ -35,21 +35,22 @@ public class PortFolioHandler {
     private String apiKey;
 
     public CoinSwitchResponse<List<PortFolio>> getPortFolioDetails() throws UnsupportedEncodingException, URISyntaxException, JsonProcessingException {
-        logger.info("Get Port Folio Details");
-        String signature = coinSwitchSignatureGeneration.generateSignature(HttpMethod.GET.name(),
-                getPath(), new HashMap<>(), new HashMap<>());
-        CoinSwitchResponse<List<PortFolio>> coinSwitchResponse = restClient.get().uri(getPath())
-                .header(CommonConstants.CS_AUTH_SIGNATURE, signature)
-                .header(CommonConstants.CS_AUTH_APIKEY, apiKey)
-                .retrieve().body(new ParameterizedTypeReference<>() {
-                });
-        if (coinSwitchResponse == null) {
-            logger.error("Unable to retrieve the Port Folio Details", getPath());
-            throw new RuntimeException("Exception in Retrieving Port Folio Details " );
-        }
-        logger.info("SuccessFully Retreived Port Folio Details path {}", getPath());
-        logger.info("Port Folio Details Fetched {}", coinSwitchResponse);
-        return coinSwitchResponse;
+//        logger.info("Get Port Folio Details");
+//        String signature = coinSwitchSignatureGeneration.generateSignature(HttpMethod.GET.name(),
+//                getPath(), new HashMap<>(), new HashMap<>());
+//        CoinSwitchResponse<List<PortFolio>> coinSwitchResponse = restClient.get().uri(getPath())
+//                .header(CommonConstants.CS_AUTH_SIGNATURE, signature)
+//                .header(CommonConstants.CS_AUTH_APIKEY, apiKey)
+//                .retrieve().body(new ParameterizedTypeReference<>() {
+//                });
+//        if (coinSwitchResponse == null) {
+//            logger.error("Unable to retrieve the Port Folio Details", getPath());
+//            throw new RuntimeException("Exception in Retrieving Port Folio Details " );
+//        }
+//        logger.info("SuccessFully Retreived Port Folio Details path {}", getPath());
+//        logger.info("Port Folio Details Fetched {}", coinSwitchResponse);
+//        return coinSwitchResponse;
+        return null;
     }
 
     private String getPath() {

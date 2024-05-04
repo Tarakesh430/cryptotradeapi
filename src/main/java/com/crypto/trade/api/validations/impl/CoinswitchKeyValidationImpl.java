@@ -1,10 +1,14 @@
 package com.crypto.trade.api.validations.impl;
 
 import com.crypto.trade.api.exception.KeyValidationException;
+import com.crypto.trade.api.request.KeyValidationRequest;
 import com.crypto.trade.api.security.SignatureGeneration;
+import com.crypto.trade.api.utils.CoinSwitchCommonFunctions;
 import com.crypto.trade.api.utils.constants.CommonConstants;
 import com.crypto.trade.api.validations.KeyValidation;
+import com.crypto.trade.api.validations.KeyValidationFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.micrometer.common.util.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -21,30 +25,31 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component("coinswitchKeyValidation")
+import static com.crypto.trade.api.utils.constants.CoinswitchApiPaths.VALIDATE_KEY_PATH;
+
+@Component("coinswitchx")
 @RequiredArgsConstructor
 public class CoinswitchKeyValidationImpl implements KeyValidation {
     private final Logger logger = LoggerFactory.getLogger(CoinswitchKeyValidationImpl.class);
     private final RestClient restClient;
     private final SignatureGeneration coinSwitchSignatureGeneration;
-
-    @Value("${coinswitch.trade.api.key}")
-    private String apiKey;
-
+    private final CoinSwitchCommonFunctions coinSwitchCommonFunctions;
     @Value("${coinswitch.trade.api.baseUrl}")
     private String baseUrl;
 
-    private final String VALIDATE_KEY_PATH = "/validate/keys";
     private static final String SUCCESS = "SUCCESS";
     private static final String FAILURE = "FAILURE";
 
+
     @Override
-    public boolean validateKeys() throws UnsupportedEncodingException, URISyntaxException, JsonProcessingException, KeyValidationException {
-        String signature = coinSwitchSignatureGeneration.generateSignature(HttpMethod.GET.name(),
+    public boolean validateKeys(KeyValidationRequest keyValidationRequest) throws UnsupportedEncodingException,
+            URISyntaxException, JsonProcessingException, KeyValidationException {
+        validateRequest(keyValidationRequest);
+        String signature = coinSwitchSignatureGeneration.generateSignature(keyValidationRequest.getSecretKey(), HttpMethod.GET.name(),
                 getValidatePath(), new HashMap<>(), new HashMap<>());
         String response = restClient.get().uri(getValidatePath())
-                .header(CommonConstants.CS_AUTH_SIGNATURE, signature)
-                .header(CommonConstants.CS_AUTH_APIKEY, apiKey)
+                .headers(httpHeaders -> httpHeaders.putAll(coinSwitchCommonFunctions.getHeaders(signature,
+                        keyValidationRequest.getApiKey())))
                 .exchange((request, resp) -> {
                     if (resp.getStatusCode().equals(HttpStatus.ACCEPTED)) {
                         return SUCCESS;
@@ -55,19 +60,25 @@ public class CoinswitchKeyValidationImpl implements KeyValidation {
                 });
         switch (response) {
             case SUCCESS:
-                logger.info("Key Validation Successfull ");
+                logger.info("Key Validation Successfully ");
                 break;
             case FAILURE:
                 logger.info("Key Validation Failed ");
-                throw new KeyValidationException("Key Validation Failed for the CoinSwitch");
+                throw new KeyValidationException("Key Validation Failed for CoinSwitch Excchange");
             default:
                 logger.info("Pls check the code for Implementation issues");
         }
-        return false;
+        return true;
+    }
+
+    private void validateRequest(KeyValidationRequest keyValidationRequest) throws KeyValidationException {
+        if (StringUtils.isBlank(keyValidationRequest.getSecretKey()) ||
+                StringUtils.isBlank(keyValidationRequest.getApiKey())) {
+            throw new KeyValidationException("Empty Values Passed in the Request for the exchange");
+        }
     }
 
     public String getValidatePath() {
         return baseUrl.concat(VALIDATE_KEY_PATH);
     }
-
 }

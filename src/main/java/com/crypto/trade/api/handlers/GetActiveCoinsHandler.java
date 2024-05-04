@@ -34,29 +34,30 @@ public class GetActiveCoinsHandler {
     private String apiKey;
 
     public CoinSwitchResponse<Map<String, List<String>>> getActiveCoins(String exchange) throws UnsupportedEncodingException, URISyntaxException, JsonProcessingException {
-        logger.info("Get Active Coins for Exchange {}", exchange);
-        String path = getPath();
-        path = path.concat("?exchange=" + URLEncoder.encode(exchange, StandardCharsets.UTF_8));
-        String signature = coinSwitchSignatureGeneration.generateSignature(HttpMethod.GET.name(),
-                path, new HashMap<>(), new HashMap<>());
-        CoinSwitchResponse<Map<String, List<String>>> coinSwitchResponse = null;
-        try{
-            coinSwitchResponse = restClient.get().uri(path)
-                    .header(CommonConstants.CS_AUTH_SIGNATURE, signature)
-                    .header(CommonConstants.CS_AUTH_APIKEY, apiKey)
-                    .header("Accept","*/*")
-                    .retrieve().body(new ParameterizedTypeReference<>() {
-                    });
-        }catch(Exception ex){
-            logger.info("Exception ex {}",ex.getMessage());
-        }
-        if (coinSwitchResponse == null) {
-            logger.error("Exception in Getting Active Coins for exchange {} with path {}", exchange, path);
-            throw new RuntimeException("Exception in Getting Active Coins for exchange " + exchange);
-        }
-        logger.info("Successfully retrieved Actibve Coinst for exchange {} path{}", exchange, path);
-        logger.info("Active Coins Fetched {}", coinSwitchResponse);
-        return coinSwitchResponse;
+//        logger.info("Get Active Coins for Exchange {}", exchange);
+//        String path = getPath();
+//        path = path.concat("?exchange=" + URLEncoder.encode(exchange, StandardCharsets.UTF_8));
+//        String signature = coinSwitchSignatureGeneration.generateSignature(HttpMethod.GET.name(),
+//                path, new HashMap<>(), new HashMap<>());
+//        CoinSwitchResponse<Map<String, List<String>>> coinSwitchResponse = null;
+//        try{
+//            coinSwitchResponse = restClient.get().uri(path)
+//                    .header(CommonConstants.CS_AUTH_SIGNATURE, signature)
+//                    .header(CommonConstants.CS_AUTH_APIKEY, apiKey)
+//                    .header("Accept","*/*")
+//                    .retrieve().body(new ParameterizedTypeReference<>() {
+//                    });
+//        }catch(Exception ex){
+//            logger.info("Exception ex {}",ex.getMessage());
+//        }
+//        if (coinSwitchResponse == null) {
+//            logger.error("Exception in Getting Active Coins for exchange {} with path {}", exchange, path);
+//            throw new RuntimeException("Exception in Getting Active Coins for exchange " + exchange);
+//        }
+//        logger.info("Successfully retrieved Actibve Coinst for exchange {} path{}", exchange, path);
+//        logger.info("Active Coins Fetched {}", coinSwitchResponse);
+//        return coinSwitchResponse;
+        return null;
     }
 
     private String getPath() {

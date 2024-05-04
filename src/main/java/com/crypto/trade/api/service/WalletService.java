@@ -1,6 +1,5 @@
 package com.crypto.trade.api.service;
 
-import com.crypto.trade.api.controller.WalletResource;
 import com.crypto.trade.api.handlers.PortFolioHandler;
 import com.crypto.trade.api.response.CoinSwitchResponse;
 import com.crypto.trade.api.response.PortFolio;
@@ -17,7 +16,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class WalletService {
-    private final Logger logger = LoggerFactory.getLogger(WalletResource.class);
+    private final Logger logger = LoggerFactory.getLogger(WalletService.class);
     private final PortFolioHandler portFolioHandler;
 
     public CoinSwitchResponse<List<PortFolio>> getPortFolioDetails()

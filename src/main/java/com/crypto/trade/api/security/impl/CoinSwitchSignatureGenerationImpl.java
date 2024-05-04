@@ -36,11 +36,11 @@ public class CoinSwitchSignatureGenerationImpl implements SignatureGeneration {
      * @param payload  The payload of the request.
      * @param params   The query parameters of the request.
      * @return The generated signature.
-     * @throws URISyntaxException     If there is an issue with the URI syntax.
+     * @throws URISyntaxException      If there is an issue with the URI syntax.
      * @throws JsonProcessingException If there is an issue processing JSON.
      */
     @Override
-    public String generateSignature(String method, String endPoint, Map<String, Object> payload, Map<String, String> params)
+    public String generateSignature(String secretKey, String method, String endPoint, Map<String, Object> payload, Map<String, String> params)
             throws URISyntaxException, JsonProcessingException {
         // Log the generation of signature
         logger.info("Generate Signature for Coinswitch Request method {}" +
@@ -61,7 +61,7 @@ public class CoinSwitchSignatureGenerationImpl implements SignatureGeneration {
         logger.info("Signature Message: {}", signatureMessage);
 
         // Generate the signature request
-        String signatureRequest = signatureRequestStrategy.generate(signatureMessage);
+        String signatureRequest = signatureRequestStrategy.generate(signatureMessage, secretKey);
         logger.info("Signature Request: {}", signatureRequest);
         return signatureRequest;
     }

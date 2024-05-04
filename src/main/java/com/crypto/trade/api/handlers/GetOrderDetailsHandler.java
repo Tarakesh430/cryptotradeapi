@@ -34,23 +34,24 @@ public class GetOrderDetailsHandler {
     private String apiKey;
 
     public CoinSwitchResponse<Order> getOrderDetails(String orderId) throws UnsupportedEncodingException, URISyntaxException, JsonProcessingException {
-        logger.info("Get Order Details for Order Id {}", orderId);
-        String path = getPath();
-        path = path.concat("?&order_id=" + URLEncoder.encode(orderId, StandardCharsets.UTF_8));
-        String signature = coinSwitchSignatureGeneration.generateSignature(HttpMethod.GET.name(),
-                getPath(), new HashMap<>(), new HashMap<>());
-        CoinSwitchResponse<Order> coinSwitchResponse = restClient.get().uri(path)
-                .header(CommonConstants.CS_AUTH_SIGNATURE, signature)
-                .header(CommonConstants.CS_AUTH_APIKEY, apiKey)
-                .retrieve().body(new ParameterizedTypeReference<CoinSwitchResponse<Order>>() {
-                });
-        if (coinSwitchResponse == null) {
-            logger.error("Exception in Getting Order Details for {} with path {}", orderId, path);
-            throw new RuntimeException("Exception in getting Order Details " + orderId);
-        }
-        logger.info("Successfully retrieved Order Details for exchange {} path {}", orderId, path);
-        logger.info("Order Details Fetched {}", coinSwitchResponse);
-        return coinSwitchResponse;
+//        logger.info("Get Order Details for Order Id {}", orderId);
+//        String path = getPath();
+//        path = path.concat("?&order_id=" + URLEncoder.encode(orderId, StandardCharsets.UTF_8));
+//        String signature = coinSwitchSignatureGeneration.generateSignature(HttpMethod.GET.name(),
+//                getPath(), new HashMap<>(), new HashMap<>());
+//        CoinSwitchResponse<Order> coinSwitchResponse = restClient.get().uri(path)
+//                .header(CommonConstants.CS_AUTH_SIGNATURE, signature)
+//                .header(CommonConstants.CS_AUTH_APIKEY, apiKey)
+//                .retrieve().body(new ParameterizedTypeReference<CoinSwitchResponse<Order>>() {
+//                });
+//        if (coinSwitchResponse == null) {
+//            logger.error("Exception in Getting Order Details for {} with path {}", orderId, path);
+//            throw new RuntimeException("Exception in getting Order Details " + orderId);
+//        }
+//        logger.info("Successfully retrieved Order Details for exchange {} path {}", orderId, path);
+//        logger.info("Order Details Fetched {}", coinSwitchResponse);
+//        return coinSwitchResponse;
+        return null;
     }
 
     private String getPath() {

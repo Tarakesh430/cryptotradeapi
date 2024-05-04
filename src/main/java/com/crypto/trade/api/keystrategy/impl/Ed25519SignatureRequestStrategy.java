@@ -18,11 +18,9 @@ import java.nio.charset.StandardCharsets;
 public class Ed25519SignatureRequestStrategy implements SignatureRequestStrategy {
     private final Logger logger = LoggerFactory.getLogger(Ed25519SignatureRequestStrategy.class);
 
-    @Value("${coinswitch.trade.secret.key}")
-    private String secretKey;
 
     @Override
-    public String generate(String request) {
+    public String generate(String request,String secretKey) {
         byte[] requestBytes = request.getBytes(StandardCharsets.UTF_8);
 
         // Decode secret key and initialize private key
@@ -38,4 +36,5 @@ public class Ed25519SignatureRequestStrategy implements SignatureRequestStrategy
         // Convert signature bytes to hexadecimal string
         return Hex.toHexString(signatureBytes);
     }
+
 }

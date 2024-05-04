@@ -8,13 +8,10 @@ import org.springframework.web.client.RestClient;
 
 @Configuration
 public class AppConfig {
-    @Value("${coinswitch.trade.api.baseUrl}")
-    private String coinswitchBaseUrl;
 
     @Bean
     public RestClient restClient() {
-        System.out.println(coinswitchBaseUrl);
-        return RestClient.create(coinswitchBaseUrl);
+        return RestClient.create();
     }
 
     @Bean("objectMapper")
