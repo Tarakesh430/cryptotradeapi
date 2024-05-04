@@ -37,4 +37,5 @@ public class CoinSwitchCommonFunctions {
         httpHeaders.add(CommonConstants.CS_AUTH_APIKEY, apiKey);
         return httpHeaders;
     }
+
 }
