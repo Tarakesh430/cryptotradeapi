@@ -35,7 +35,6 @@ public class GetActiveCoinsHandler implements BaseHandler {
 
     private final RestClient restClient;
     private final SignatureGeneration coinSwitchSignatureGeneration;
-    private final CoinSwitchCommonFunctions coinSwitchCommonFunctions;
 
     @Value("${coinswitch.trade.api.baseUrl}")
     private String baseUrl;
@@ -49,9 +48,10 @@ public class GetActiveCoinsHandler implements BaseHandler {
 
         String path = getPath();
         path = path.concat("?exchange=" + URLEncoder.encode(handlerContext.getExchange(), StandardCharsets.UTF_8));
+
         String signature = coinSwitchSignatureGeneration.generateSignature(secretKey, HttpMethod.GET.name(),
                 path, new HashMap<>(), new HashMap<>());
-        Response<Map<String, List<CoinDto>>> response = null;
+        Response<Map<String, List<String>>> response = null;
         try {
              response = restClient.get().uri(baseUrl.concat(path))
                     .header(CommonConstants.CS_AUTH_SIGNATURE, signature)

@@ -18,7 +18,8 @@ import java.util.List;
 public class HandlerContext implements Serializable {
     private HttpHeaders httpHeaders;
     private String exchange;
-    private List<CoinDto> coins;
+    private List<String> coins;
     private CryptoOrder cryptoOrder;
     private OrderResponse orderResponse;
+    private OrderRequest orderRequest;
 }

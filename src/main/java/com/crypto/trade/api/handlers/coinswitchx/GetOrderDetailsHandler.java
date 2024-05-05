@@ -53,7 +53,7 @@ public class GetOrderDetailsHandler implements BaseHandler {
         String path = getPath();
         path = path.concat("?order_id=" + URLEncoder.encode(cryptoOrder.getOrderId(), StandardCharsets.UTF_8));
         String signature = coinSwitchSignatureGeneration.generateSignature(secretKey, HttpMethod.GET.name(),
-                getPath(), new HashMap<>(), new HashMap<>());
+                path, new HashMap<>(), new HashMap<>());
         Response<CoinSwitchOrderResponse> response = null;
         try {
             response = restClient.get().uri(baseUrl.concat(path))
@@ -67,9 +67,9 @@ public class GetOrderDetailsHandler implements BaseHandler {
         if (Objects.isNull(response) || Objects.isNull(response.getData())) {
             logger.error("Exception in getting Order Details for Exchange {}  Order Id {} path {}",
                     handlerContext.getExchange(), cryptoOrder.getOrderId(), path);
-            throw new Exception("Exception in getting Order Details for Order Id "+ cryptoOrder.getOrderId());
+            throw new Exception("Exception in getting Order Details for Order Id " + cryptoOrder.getOrderId());
         }
-        handlerContext.setOrderResponse(orderMapper.toOrderResponse(response.getData(),cryptoOrder));
+        handlerContext.setOrderResponse(orderMapper.toOrderResponse(response.getData(), cryptoOrder));
     }
 
     private String getPath() {

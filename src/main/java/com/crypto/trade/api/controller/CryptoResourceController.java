@@ -48,7 +48,7 @@ public class CryptoResourceController {
         }
     }
     @GetMapping("/active-coins")
-    public ApiResponse<List<CoinDto>> getActiveCoins(@RequestParam("exchange") String exchange, @RequestHeader HttpHeaders httpHeaders) {
+    public ApiResponse<List<String>> getActiveCoins(@RequestParam("exchange") String exchange, @RequestHeader HttpHeaders httpHeaders) {
         try {
             logger.info("GET :: ACTIVE CRYPTO EXCHANGES :: LIST");
 

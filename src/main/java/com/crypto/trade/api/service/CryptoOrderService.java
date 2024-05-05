@@ -7,6 +7,7 @@ import com.crypto.trade.api.handlers.LoadHandlerHelper;
 import com.crypto.trade.api.repository.CryptoExchangeRepository;
 import com.crypto.trade.api.repository.CryptoOrderRepository;
 import com.crypto.trade.api.request.HandlerContext;
+import com.crypto.trade.api.request.OrderRequest;
 import com.crypto.trade.api.response.OrderResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -35,6 +36,17 @@ public class CryptoOrderService {
 
         HandlerContext handlerContext = HandlerContext.builder().cryptoOrder(cryptoOrder).
                 exchange(exchange).httpHeaders(httpHeaders).build();
+        handler.process(handlerContext);
+        return handlerContext.getOrderResponse();
+    }
+    public OrderResponse placeOrder(OrderRequest orderRequest, HttpHeaders httpHeaders) throws Exception {
+        //Check for the Exchange is available
+        logger.info("Retrieve Crypto Order Details for Exchange {} ",orderRequest.getExchange());
+        CryptoExchange cryptoExchange = cryptoExchangeRepository.findByExchangeName(orderRequest.getExchange())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid Exchange Passed"));
+        BaseHandler handler = (BaseHandler) loadHandlerHelper.loadHandlerBean(cryptoExchange.getExchangeName(), "createOrder");
+        HandlerContext handlerContext = HandlerContext.builder().orderRequest(orderRequest).
+                exchange(orderRequest.getExchange()).httpHeaders(httpHeaders).build();
         handler.process(handlerContext);
         return handlerContext.getOrderResponse();
     }

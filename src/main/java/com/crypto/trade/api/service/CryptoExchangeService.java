@@ -1,6 +1,6 @@
 package com.crypto.trade.api.service;
 
-import com.crypto.trade.api.config.BeanLoader;
+
 import com.crypto.trade.api.dto.CoinDto;
 import com.crypto.trade.api.dto.CryptoExchangeDto;
 import com.crypto.trade.api.entity.CryptoExchange;
@@ -53,7 +53,7 @@ public class CryptoExchangeService {
         logger.info("Key Validation Success full");
     }
 
-    public List<CoinDto> getAllActiveCoins(String exchange, HttpHeaders httpHeaders)
+    public List<String> getAllActiveCoins(String exchange, HttpHeaders httpHeaders)
             throws Exception {
         logger.info("Get Active Trade Coins for EXchange {} ", exchange);
         BaseHandler handler = (BaseHandler) loadHandlerHelper.loadHandlerBean(exchange, "getActiveCoins");

@@ -3,6 +3,7 @@ package com.crypto.trade.api.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.Set;
 
 @Entity
@@ -10,7 +11,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CryptoExchange {
+public class CryptoExchange implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,6 +36,6 @@ public class CryptoExchange {
     @Column(name = "updated_time")
     private Long updatedTime;
 
-    @OneToMany(mappedBy = "cryptoExchange")
+    @OneToMany(mappedBy = "cryptoExchange",cascade = CascadeType.ALL)
     private Set<CryptoOrder> cryptoOrders;
 }
