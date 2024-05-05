@@ -5,9 +5,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
-public class Order {
+public class OrderResponse implements Serializable {
+    @JsonProperty("global_order_uid")
+    private String globalOrderUid;
     @JsonProperty("order_id")
     private String orderId;
     @JsonProperty("symbol")
@@ -16,7 +20,7 @@ public class Order {
     private String price;
     @JsonProperty("average_price")
     private String averagePrice;
-    @JsonProperty("org_qty")
+    @JsonProperty("original_qty")
     private String origQty;
     @JsonProperty("executed_qty")
     private String executedQty;
@@ -30,4 +34,6 @@ public class Order {
     private Long createdTime;
     @JsonProperty("updated_time")
     private Long updatedTime;
+    @JsonProperty("exchange")
+    private String exchange;
 }

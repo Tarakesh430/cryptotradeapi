@@ -3,6 +3,8 @@ package com.crypto.trade.api.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Set;
+
 @Entity
 @Table(name = "crypto_exchange")
 @Data
@@ -32,4 +34,7 @@ public class CryptoExchange {
 
     @Column(name = "updated_time")
     private Long updatedTime;
+
+    @OneToMany(mappedBy = "cryptoExchange")
+    private Set<CryptoOrder> cryptoOrders;
 }
