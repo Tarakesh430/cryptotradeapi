@@ -1,9 +1,11 @@
 package com.crypto.trade.api.handlers.coinswitchx;
 
-import com.crypto.trade.api.dto.CoinDto;
-import com.crypto.trade.api.handlers.BaseHandler;
+import com.crypto.trade.api.entity.CryptoOrder;
+import com.crypto.trade.api.mapper.OrderMapper;
+import com.crypto.trade.api.repository.CryptoOrderRepository;
 import com.crypto.trade.api.request.HandlerContext;
 import com.crypto.trade.api.response.Response;
+import com.crypto.trade.api.response.coinswitch.CoinSwitchOrderResponse;
 import com.crypto.trade.api.security.SignatureGeneration;
 import com.crypto.trade.api.utils.constants.CommonConstants;
 import lombok.RequiredArgsConstructor;
@@ -15,58 +17,57 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
+
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
-
-@Component("coinswitchx_getActiveCoins")
+@Component("coinswitchx_deleteOrder")
 @RequiredArgsConstructor
-public class GetActiveCoinsHandler implements BaseHandler {
-    private final Logger logger = LoggerFactory.getLogger(GetActiveCoinsHandler.class);
+public class DeleteOrder {
+
+    private final Logger logger = LoggerFactory.getLogger(DeleteOrder.class);
 
     private final RestClient restClient;
     private final SignatureGeneration coinSwitchSignatureGeneration;
+    private final OrderMapper orderMapper;
+    private final CryptoOrderRepository cryptoOrderRepository;
 
     @Value("${coinswitch.trade.api.baseUrl}")
     private String baseUrl;
 
     public <K,V> void process(HandlerContext<K,V> handlerContext) throws Exception {
-        logger.info("Get Active Coins for Exchange {}", handlerContext.getExchange());
+        CryptoOrder cryptoOrder = handlerContext.getCryptoOrder();
 
         HttpHeaders httpHeaders = handlerContext.getHttpHeaders();
         String secretKey = httpHeaders.getFirst(CommonConstants.SECRET_KEY_HEADER);
         String apiKey = httpHeaders.getFirst(CommonConstants.API_KEY_HEADER);
 
+        logger.info("Cancel Order for Order Id {}", cryptoOrder.getOrderId());
         String path = getPath();
-        path = path.concat("?exchange=" + URLEncoder.encode(handlerContext.getExchange(), StandardCharsets.UTF_8));
-
-        String signature = coinSwitchSignatureGeneration.generateSignature(secretKey, HttpMethod.GET.name(),
+        path = path.concat("?order_id=" + URLEncoder.encode(cryptoOrder.getOrderId(), StandardCharsets.UTF_8));
+        String signature = coinSwitchSignatureGeneration.generateSignature(secretKey, HttpMethod.DELETE.name(),
                 path, new HashMap<>(), new HashMap<>());
-        Response<Map<String, List<String>>> response = null;
+        Response<CoinSwitchOrderResponse> response = null;
         try {
-             response = restClient.get().uri(baseUrl.concat(path))
+            response = restClient.delete().uri(baseUrl.concat(path))
                     .header(CommonConstants.CS_AUTH_SIGNATURE, signature)
-                     .header(CommonConstants.CS_AUTH_APIKEY, apiKey)
+                    .header(CommonConstants.CS_AUTH_APIKEY, apiKey)
                     .retrieve().body(new ParameterizedTypeReference<>() {
                     });
         } catch (Exception ex) {
             logger.info("Exception ex {}", ex.getMessage());
         }
         if (Objects.isNull(response) || Objects.isNull(response.getData())) {
-            logger.error("Exception in Getting Active Coins for exchange {} with path {}", handlerContext.getExchange(), path);
-            throw new Exception("Exception in Getting Active Coins for exchange " + handlerContext.getExchange());
+            logger.error("Exception in getting Order Details for Exchange {}  Order Id {} path {}",
+                    handlerContext.getExchange(), cryptoOrder.getOrderId(), path);
+            throw new Exception("Exception in getting Order Details for Order Id " + cryptoOrder.getOrderId());
         }
-        logger.info("Successfully retrieved Actibve Coinst for exchange {} path{}", handlerContext.getExchange(), path);
-        logger.info("Active Coins Fetched {}", response);
-        //Populate the Handler Context
-        handlerContext.setCoins(response.getData().get(handlerContext.getExchange()));
+        handlerContext.setOrderResponse(orderMapper.toOrderResponse(response.getData(), cryptoOrder));
     }
 
     private String getPath() {
-        return "/trade/api/v2/coins";
+        return "/trade/api/v2/order";
     }
 }

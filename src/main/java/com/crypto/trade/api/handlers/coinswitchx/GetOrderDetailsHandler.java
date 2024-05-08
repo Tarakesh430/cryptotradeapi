@@ -1,16 +1,13 @@
 package com.crypto.trade.api.handlers.coinswitchx;
 
-import com.crypto.trade.api.dto.CoinDto;
 import com.crypto.trade.api.entity.CryptoOrder;
 import com.crypto.trade.api.handlers.BaseHandler;
 import com.crypto.trade.api.mapper.OrderMapper;
 import com.crypto.trade.api.request.HandlerContext;
-import com.crypto.trade.api.response.OrderResponse;
 import com.crypto.trade.api.response.Response;
 import com.crypto.trade.api.response.coinswitch.CoinSwitchOrderResponse;
 import com.crypto.trade.api.security.SignatureGeneration;
 import com.crypto.trade.api.utils.constants.CommonConstants;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,13 +18,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 @Component("coinswitchx_getOrderDetails")
@@ -42,7 +35,7 @@ public class GetOrderDetailsHandler implements BaseHandler {
     @Value("${coinswitch.trade.api.baseUrl}")
     private String baseUrl;
 
-    public void process(HandlerContext handlerContext) throws Exception {
+    public <K,V> void process(HandlerContext<K, V> handlerContext) throws Exception {
         CryptoOrder cryptoOrder = handlerContext.getCryptoOrder();
 
         HttpHeaders httpHeaders = handlerContext.getHttpHeaders();

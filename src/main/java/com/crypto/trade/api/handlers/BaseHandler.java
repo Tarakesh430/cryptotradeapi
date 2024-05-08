@@ -8,6 +8,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 public interface BaseHandler {
-    void process(HandlerContext handlerContext) throws Exception;
+
+    <K,V> void process(HandlerContext<K,V> handlerContext) throws Exception;
 
 }

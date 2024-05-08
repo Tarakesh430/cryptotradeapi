@@ -10,16 +10,20 @@ import lombok.Data;
 import org.springframework.http.HttpHeaders;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @AllArgsConstructor
 @Builder
-public class HandlerContext implements Serializable {
+public class HandlerContext<K,V> implements Serializable {
     private HttpHeaders httpHeaders;
     private String exchange;
     private List<String> coins;
     private CryptoOrder cryptoOrder;
     private OrderResponse orderResponse;
     private OrderRequest orderRequest;
+    private Map<K,V> data;
+    private List<OrderResponse> orderResponseList;
 }

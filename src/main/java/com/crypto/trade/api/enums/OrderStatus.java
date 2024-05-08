@@ -22,12 +22,12 @@ public enum OrderStatus {
         this.value = value;
     }
 
-    public OrderStatus fromString(String orderStatus) {
+    public static OrderStatus fromString(String orderStatus) {
         return Arrays.stream(OrderStatus.values())
                 .filter(status -> status.getValue().equalsIgnoreCase(orderStatus)).findFirst().orElse(null);
     }
 
-    public boolean in(String orderStatus) {
+    public static boolean in(String orderStatus) {
         return Objects.nonNull(fromString(orderStatus));
     }
 }

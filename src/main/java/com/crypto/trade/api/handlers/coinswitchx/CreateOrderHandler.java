@@ -53,7 +53,7 @@ public class CreateOrderHandler implements BaseHandler {
     private String baseUrl;
 
     @Override
-    public void process(HandlerContext handlerContext) throws Exception {
+    public <K,V> void process(HandlerContext<K,V> handlerContext) throws Exception {
         OrderRequest orderRequest = handlerContext.getOrderRequest();
 
         HttpHeaders httpHeaders = handlerContext.getHttpHeaders();
