@@ -4,6 +4,7 @@ package com.crypto.trade.api.request;
 import com.crypto.trade.api.dto.CoinDto;
 import com.crypto.trade.api.entity.CryptoOrder;
 import com.crypto.trade.api.response.OrderResponse;
+import com.crypto.trade.api.response.PortFolio;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,4 +27,5 @@ public class HandlerContext<K,V> implements Serializable {
     private OrderRequest orderRequest;
     private Map<K,V> data;
     private List<OrderResponse> orderResponseList;
+    private List<PortFolio> portFolio;
 }
