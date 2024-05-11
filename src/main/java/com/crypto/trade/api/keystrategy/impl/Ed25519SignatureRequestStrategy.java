@@ -21,8 +21,8 @@ public class Ed25519SignatureRequestStrategy implements SignatureRequestStrategy
 
     @Override
     public String generate(String request,String secretKey) {
+        logger.info("The request to generate a signature {}",request);
         byte[] requestBytes = request.getBytes(StandardCharsets.UTF_8);
-
         // Decode secret key and initialize private key
         byte[] secretKeyBytes = Hex.decode(secretKey);
         Ed25519PrivateKeyParameters privateKey = new Ed25519PrivateKeyParameters(secretKeyBytes, 0);
@@ -32,7 +32,6 @@ public class Ed25519SignatureRequestStrategy implements SignatureRequestStrategy
         signer.init(true, privateKey);
         signer.update(requestBytes, 0, requestBytes.length);
         byte[] signatureBytes = signer.generateSignature();
-
         // Convert signature bytes to hexadecimal string
         return Hex.toHexString(signatureBytes);
     }

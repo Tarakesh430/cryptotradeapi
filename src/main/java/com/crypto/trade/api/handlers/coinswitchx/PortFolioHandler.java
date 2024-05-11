@@ -54,7 +54,7 @@ public class PortFolioHandler implements BaseHandler {
             logger.error("Unable to retrieve the Port Folio Details", getPath());
             throw new RuntimeException("Exception in Retrieving Port Folio Details ");
         }
-        logger.info("SuccessFully Retreived Port Folio Details path {}", getPath());
+        logger.info("SuccessFully Retrieved Port Folio Details path {}", getPath());
         logger.info("Port Folio Details Fetched {}", response);
         handlerContext.setPortFolio(response.getData());
     }

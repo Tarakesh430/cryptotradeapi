@@ -46,7 +46,7 @@ public class CryptoExchangeService {
     public void validateUserKeys(KeyValidationRequest keyValidationRequest)
             throws UnsupportedEncodingException, URISyntaxException, JsonProcessingException, KeyValidationException {
         logger.info("Validate User Keys for exchange {}", keyValidationRequest.getExchangeName());
-        //No validation Required Exchnage related Validation on the Request
+        //No validation Required Exchange related Validation on the Request
         // will be carried out in the Concrete Impl of KayValidation
         keyValidationFactory.keyValidationFactory(keyValidationRequest.getExchangeName())
                 .validateKeys(keyValidationRequest);
