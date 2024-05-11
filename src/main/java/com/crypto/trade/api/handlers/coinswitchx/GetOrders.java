@@ -49,7 +49,7 @@ public class GetOrders implements BaseHandler {
         String path = getRequestString((Map<String, Object>) handlerContext.getData());
         String signature = coinSwitchSignatureGeneration.generateSignature(secretKey, HttpMethod.GET.name(),
                 path, new HashMap<>(), new HashMap<>());
-        Response<List<CoinSwitchOrderResponse>> response = null;
+        Response<Map<String,List<CoinSwitchOrderResponse>>> response = null;
         try {
             response = restClient.get().uri(baseUrl.concat(path))
                     .header(CommonConstants.CS_AUTH_SIGNATURE, signature)
@@ -63,11 +63,12 @@ public class GetOrders implements BaseHandler {
             logger.error("Exception in getting Order Details for   path {}", path);
             throw new Exception("Exception in getting Order Details for path " + path);
         }
-        handlerContext.setOrderResponseList(orderMapper.toOrderResponse(response.getData()));
+        handlerContext.setOrderResponseList(orderMapper.toOrderResponse(response.getData().get("orders")));
     }
 
     private String getRequestString(Map<String, Object> data) {
         String path = getPath();
+        path = path.concat("?");
         if (validateCount(data.get("count"))) {
             path = path.concat("count=" + URLEncoder.encode((String) data.get("count"), StandardCharsets.UTF_8))
                     .concat("&");
@@ -90,17 +91,13 @@ public class GetOrders implements BaseHandler {
             path = path.concat("type=" + URLEncoder.encode((String) data.get("type"), StandardCharsets.UTF_8))
                     .concat("&");
         }
-        if (validateStatus(data.get("status"))) {
-            path = path.concat("open=" + URLEncoder.encode((String) data.get("status"), StandardCharsets.UTF_8))
+        if (Objects.nonNull(data.get("status"))) {
+            path = path.concat("open=" + URLEncoder.encode("open"
+                            .equalsIgnoreCase((String) data.get("status"))?"true":"false", StandardCharsets.UTF_8))
                     .concat("&");
         }
-        path = path.concat("exchange=" + URLEncoder.encode((String) data.get("exchange"), StandardCharsets.UTF_8));
+        path = path.concat("exchanges=" + URLEncoder.encode((String) data.get("exchange"), StandardCharsets.UTF_8));
         return path;
-    }
-
-    private boolean validateStatus(Object status) {
-        return Objects.nonNull(status)
-                && CommonUtils.getOptional(() -> OrderStatus.in((String) status)).filter(val -> val).isPresent();
     }
 
     private boolean validateType(Object type) {
@@ -127,7 +124,8 @@ public class GetOrders implements BaseHandler {
         return CommonUtils.getOptional(() -> Integer.valueOf((String) count)).isPresent();
     }
 
-    private String getPath() {
+    @Override
+    public String getPath() {
         return "/trade/api/v2/orders";
     }
 }

@@ -1,6 +1,7 @@
 package com.crypto.trade.api.handlers.coinswitchx;
 
 import com.crypto.trade.api.entity.CryptoOrder;
+import com.crypto.trade.api.handlers.BaseHandler;
 import com.crypto.trade.api.mapper.OrderMapper;
 import com.crypto.trade.api.repository.CryptoOrderRepository;
 import com.crypto.trade.api.request.HandlerContext;
@@ -25,7 +26,7 @@ import java.util.Objects;
 
 @Component("coinswitchx_deleteOrder")
 @RequiredArgsConstructor
-public class DeleteOrder {
+public class DeleteOrder implements BaseHandler {
 
     private final Logger logger = LoggerFactory.getLogger(DeleteOrder.class);
 
@@ -37,6 +38,7 @@ public class DeleteOrder {
     @Value("${coinswitch.trade.api.baseUrl}")
     private String baseUrl;
 
+    @Override
     public <K,V> void process(HandlerContext<K,V> handlerContext) throws Exception {
         CryptoOrder cryptoOrder = handlerContext.getCryptoOrder();
 
@@ -67,7 +69,8 @@ public class DeleteOrder {
         handlerContext.setOrderResponse(orderMapper.toOrderResponse(response.getData(), cryptoOrder));
     }
 
-    private String getPath() {
+    @Override
+    public String getPath() {
         return "/trade/api/v2/order";
     }
 }

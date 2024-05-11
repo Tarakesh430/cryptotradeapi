@@ -1,13 +1,14 @@
 package com.crypto.trade.api.controller;
-import com.crypto.trade.api.dto.CoinDto;
+
 import com.crypto.trade.api.dto.CryptoExchangeDto;
-import com.crypto.trade.api.request.KeyValidationRequest;
 import com.crypto.trade.api.response.ApiResponse;
 import com.crypto.trade.api.service.CryptoExchangeService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,40 +21,50 @@ public class CryptoResourceController {
     private final CryptoExchangeService cryptoExchangeService;
 
     @GetMapping("/")
-    public String getHelloWorld(){
+    public String getHelloWorld() {
         return "Hello- World";
     }
+
     @GetMapping("/crypto-exchanges")
-    public ApiResponse<List<CryptoExchangeDto>> getCryptoExchanges() {
+    public ResponseEntity<ApiResponse<List<CryptoExchangeDto>>> getCryptoExchanges() {
         try {
             logger.info("GET :: ACTIVE CRYPTO EXCHANGES :: LIST");
-            return ApiResponse.success("Successfully Retrieved Crypto Exchanges", cryptoExchangeService.getAllCryptoExchanges());
+            return ResponseEntity.ok(ApiResponse.success("Successfully Retrieved Crypto Exchanges",
+                    cryptoExchangeService.getAllCryptoExchanges()));
         } catch (Exception ex) {
             logger.error("The exception for retrieving Crypto Exchanges ", ex);
-            return ApiResponse.error("Error in retrieving Crypto Exchanges", ex.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("Error in retrieving Crypto Exchanges", ex.getMessage()));
         }
     }
 
+    /**
+     * Validate User Keys against an exchange
+     *
+     * @param exchange    Request Param Exchange
+     * @param httpHeaders Http Headers
+     * @return Response  Entity
+     */
     @PostMapping("/validate-keys")
-    public ApiResponse<Void> validateUserKeys(@RequestBody KeyValidationRequest keyValidationRequest) {
+    public ResponseEntity<ApiResponse<Void>> validateUserKeys(@RequestParam("exchange") String exchange, @RequestHeader HttpHeaders httpHeaders) {
         try {
             logger.info("POST::KEYS FOR EXCHANGE:: VALIDATION");
-            logger.info("Key Validation Request for exchnage {}", keyValidationRequest.getExchangeName());
-            cryptoExchangeService.validateUserKeys(keyValidationRequest);
+            logger.info("Key Validation Request for exchange {}", exchange);
+            cryptoExchangeService.validateUserKeys(exchange, httpHeaders);
             logger.info("Validation Success full");
-            return ApiResponse.success("Validation Successfull", null);
+            return ResponseEntity.ok(ApiResponse.success("Validation Successfull", null));
         } catch (Exception ex) {
             logger.info("Validation Failed with Exception", ex);
-            return ApiResponse.error("Validation Failed", ex.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error("Validation Failed", ex.getMessage()));
         }
     }
+
     @GetMapping("/active-coins")
     public ApiResponse<List<String>> getActiveCoins(@RequestParam("exchange") String exchange, @RequestHeader HttpHeaders httpHeaders) {
         try {
             logger.info("GET :: ACTIVE CRYPTO EXCHANGES :: LIST");
-
             return ApiResponse.success("Successfully Retrieved Crypto Exchanges",
-                    cryptoExchangeService.getAllActiveCoins(exchange,httpHeaders));
+                    cryptoExchangeService.getAllActiveCoins(exchange, httpHeaders));
         } catch (Exception ex) {
             logger.error("The exception for retrieving Crypto Exchanges ", ex);
             return ApiResponse.error("Error in retrieving Crypto Exchanges", ex.getMessage());

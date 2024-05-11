@@ -65,7 +65,7 @@ public class GetOrderDetailsHandler implements BaseHandler {
         handlerContext.setOrderResponse(orderMapper.toOrderResponse(response.getData(), cryptoOrder));
     }
 
-    private String getPath() {
+    public String getPath() {
         return "/trade/api/v2/order";
     }
 }

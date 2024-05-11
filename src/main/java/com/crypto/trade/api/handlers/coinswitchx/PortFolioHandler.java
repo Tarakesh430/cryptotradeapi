@@ -30,19 +30,21 @@ public class PortFolioHandler implements BaseHandler {
 
     private final RestClient restClient;
     private final SignatureGeneration coinSwitchSignatureGeneration;
-
+    @Value("${coinswitch.trade.api.baseUrl}")
+    private String baseUrl;
     public <K, V> void process(HandlerContext<K, V> handlerContext) throws Exception {
         logger.info("Get Port Folio Details");
         HttpHeaders httpHeaders = handlerContext.getHttpHeaders();
         String secretKey = httpHeaders.getFirst(CommonConstants.SECRET_KEY_HEADER);
         String apiKey = httpHeaders.getFirst(CommonConstants.API_KEY_HEADER);
 
+        String path = getPath();
         String signature = coinSwitchSignatureGeneration.generateSignature(secretKey, HttpMethod.GET.name(),
-                getPath(), new HashMap<>(), new HashMap<>());
+                path, new HashMap<>(), new HashMap<>());
         Response<List<PortFolio>> response = null;
 
         try {
-            response = restClient.get().uri(getPath())
+            response = restClient.get().uri(baseUrl.concat(path))
                     .header(CommonConstants.CS_AUTH_SIGNATURE, signature)
                     .header(CommonConstants.CS_AUTH_APIKEY, apiKey)
                     .retrieve().body(new ParameterizedTypeReference<>() {
@@ -51,15 +53,16 @@ public class PortFolioHandler implements BaseHandler {
             logger.info("Exception ex {}", ex.getMessage());
         }
         if (response == null) {
-            logger.error("Unable to retrieve the Port Folio Details", getPath());
-            throw new RuntimeException("Exception in Retrieving Port Folio Details ");
+            logger.error("Unable to retrieve the Port Folio Details");
+            throw new Exception("Exception in Retrieving Port Folio Details ");
         }
         logger.info("SuccessFully Retrieved Port Folio Details path {}", getPath());
         logger.info("Port Folio Details Fetched {}", response);
         handlerContext.setPortFolio(response.getData());
     }
 
-    private String getPath() {
+    @Override
+    public String getPath() {
         return "/trade/api/v2/user/portfolio";
     }
 

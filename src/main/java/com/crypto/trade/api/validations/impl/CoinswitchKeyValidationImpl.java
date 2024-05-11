@@ -4,17 +4,13 @@ import com.crypto.trade.api.exception.KeyValidationException;
 import com.crypto.trade.api.request.KeyValidationRequest;
 import com.crypto.trade.api.security.SignatureGeneration;
 import com.crypto.trade.api.utils.CoinSwitchCommonFunctions;
-import com.crypto.trade.api.utils.constants.CommonConstants;
 import com.crypto.trade.api.validations.KeyValidation;
-import com.crypto.trade.api.validations.KeyValidationFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.micrometer.common.util.StringUtils;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -23,7 +19,6 @@ import org.springframework.web.client.RestClient;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
-import java.util.Map;
 
 import static com.crypto.trade.api.utils.constants.CoinswitchApiPaths.VALIDATE_KEY_PATH;
 
@@ -47,11 +42,11 @@ public class CoinswitchKeyValidationImpl implements KeyValidation {
         validateRequest(keyValidationRequest);
         String signature = coinSwitchSignatureGeneration.generateSignature(keyValidationRequest.getSecretKey(), HttpMethod.GET.name(),
                 getValidatePath(), new HashMap<>(), new HashMap<>());
-        String response = restClient.get().uri(getValidatePath())
+        String response = restClient.get().uri(baseUrl.concat(getValidatePath()))
                 .headers(httpHeaders -> httpHeaders.putAll(coinSwitchCommonFunctions.getHeaders(signature,
                         keyValidationRequest.getApiKey())))
                 .exchange((request, resp) -> {
-                    if (resp.getStatusCode().equals(HttpStatus.ACCEPTED)) {
+                    if (resp.getStatusCode().equals(HttpStatus.OK)) {
                         return SUCCESS;
                     }
                     logger.info("Request Failed With status code {} ", resp.getStatusCode());
@@ -64,7 +59,7 @@ public class CoinswitchKeyValidationImpl implements KeyValidation {
                 break;
             case FAILURE:
                 logger.info("Key Validation Failed ");
-                throw new KeyValidationException("Key Validation Failed for CoinSwitch Excchange");
+                throw new KeyValidationException("Key Validation Failed for CoinSwitch Exchange");
             default:
                 logger.info("Pls check the code for Implementation issues");
         }
@@ -79,6 +74,6 @@ public class CoinswitchKeyValidationImpl implements KeyValidation {
     }
 
     public String getValidatePath() {
-        return baseUrl.concat(VALIDATE_KEY_PATH);
+        return VALIDATE_KEY_PATH;
     }
 }

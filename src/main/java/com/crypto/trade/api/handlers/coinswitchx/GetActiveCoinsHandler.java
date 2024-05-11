@@ -1,6 +1,5 @@
 package com.crypto.trade.api.handlers.coinswitchx;
 
-import com.crypto.trade.api.dto.CoinDto;
 import com.crypto.trade.api.handlers.BaseHandler;
 import com.crypto.trade.api.request.HandlerContext;
 import com.crypto.trade.api.response.Response;
@@ -34,6 +33,7 @@ public class GetActiveCoinsHandler implements BaseHandler {
     @Value("${coinswitch.trade.api.baseUrl}")
     private String baseUrl;
 
+    @Override
     public <K,V> void process(HandlerContext<K,V> handlerContext) throws Exception {
         logger.info("Get Active Coins for Exchange {}", handlerContext.getExchange());
 
@@ -66,7 +66,8 @@ public class GetActiveCoinsHandler implements BaseHandler {
         handlerContext.setCoins(response.getData().get(handlerContext.getExchange()));
     }
 
-    private String getPath() {
+    @Override
+    public String getPath() {
         return "/trade/api/v2/coins";
     }
 }

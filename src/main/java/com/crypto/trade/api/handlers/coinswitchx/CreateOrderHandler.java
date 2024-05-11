@@ -1,7 +1,5 @@
 package com.crypto.trade.api.handlers.coinswitchx;
 
-import com.crypto.trade.api.dto.CoinDto;
-import com.crypto.trade.api.entity.CryptoExchange;
 import com.crypto.trade.api.entity.CryptoOrder;
 import com.crypto.trade.api.handlers.BaseHandler;
 import com.crypto.trade.api.helper.CryptoOrderHelper;
@@ -103,7 +101,8 @@ public class CreateOrderHandler implements BaseHandler {
         cryptoOrderRepository.save(cryptoOrder);
         handlerContext.setOrderResponse(orderMapper.toOrderResponse(response.getData(),cryptoOrder));
     }
-    private String getPath() {
+    @Override
+    public String getPath() {
         return "/trade/api/v2/order";
     }
 

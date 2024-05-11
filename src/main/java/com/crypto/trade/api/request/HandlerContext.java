@@ -1,7 +1,6 @@
 package com.crypto.trade.api.request;
 
 
-import com.crypto.trade.api.dto.CoinDto;
 import com.crypto.trade.api.entity.CryptoOrder;
 import com.crypto.trade.api.response.OrderResponse;
 import com.crypto.trade.api.response.PortFolio;

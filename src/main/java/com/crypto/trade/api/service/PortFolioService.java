@@ -23,15 +23,11 @@ public class PortFolioService {
 
     private final Logger logger = LoggerFactory.getLogger(PortFolioService.class);
     private final LoadHandlerHelper loadHandlerHelper;
-    private final CryptoExchangeRepository cryptoExchangeRepository;
-    private final CryptoOrderRepository cryptoOrderRepository;
-
 
     public List<PortFolio> getPortFolioDetails(String exchange, HttpHeaders httpHeaders) throws Exception {
         //Check for the Exchange is available
-
+        logger.info("Get PortFolio Details for Exchange {}",exchange);
         BaseHandler handler = (BaseHandler) loadHandlerHelper.loadHandlerBean(exchange, "getPortFolio");
-
         HandlerContext<String,String> handlerContext = HandlerContext.<String,String>builder().
                 exchange(exchange).httpHeaders(httpHeaders).build();
         handler.process(handlerContext);

@@ -9,28 +9,30 @@ import org.hibernate.query.Order;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/v1/cryptotrade/order")
+@RequestMapping("/v1/cryptotrade")
 public class CryptoOrderController {
 
     private final Logger logger = LoggerFactory.getLogger(CryptoOrderController.class);
     private final CryptoOrderService cryptoOrderService;
 
     @GetMapping("/order")
-    public ApiResponse<OrderResponse> getOrderDetails(@RequestParam("exchange") String exchange,
-                                                      @RequestParam("global-order-id") String globalOrderId, @RequestHeader HttpHeaders httpHeaders) {
+    public ResponseEntity<ApiResponse<OrderResponse>> getOrderDetails(@RequestParam("global-order-id") String globalOrderId, @RequestHeader HttpHeaders httpHeaders) {
         try {
-            OrderResponse orderDetails = cryptoOrderService.getOrderDetails(exchange, globalOrderId, httpHeaders);
-            logger.info("Successfully Retrieved OrderDetails for exchange{} globalOrder Id {}", exchange, globalOrderId);
-            return ApiResponse.success("Successfully Retrieved Order Details", orderDetails);
+            OrderResponse orderDetails = cryptoOrderService.getOrderDetails( globalOrderId, httpHeaders);
+            logger.info("Successfully Retrieved OrderDetails for globalOrder Id {}", globalOrderId);
+            return ResponseEntity.ok(ApiResponse.success("Successfully Retrieved Order Details", orderDetails));
         } catch (Exception ex) {
-            logger.info("Exception While rendering the Order Details for exchange {} order Id {}", exchange, globalOrderId);
-            return ApiResponse.error("Validation Failed", ex.getMessage());
+            logger.info("Exception While rendering the Order Details for order Id {}", globalOrderId);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("Exception in getting Order Details", ex.getMessage()));
         }
     }
 
@@ -48,20 +50,21 @@ public class CryptoOrderController {
     }
 
     @GetMapping("/orders")
-    public ApiResponse<List<OrderResponse>> getOrders(@RequestParam("count") String count,
-                                                      @RequestParam("from_time") String from_time,
-                                                      @RequestParam("to_time") String to_time, @RequestParam("side") String side,
-                                                      @RequestParam("symbols") String symbols, @RequestParam("exchange") String exchange,
-                                                      @RequestParam("type") String type, @RequestParam("status") String status,
+    public ResponseEntity<ApiResponse<List<OrderResponse>>> getOrders( String count,
+                                                       String fromTime,
+                                                       String toTime,  String side,
+                                                       String symbols, @RequestParam("exchange") String exchange,
+                                                       String type,  String status,
                                                       @RequestHeader HttpHeaders httpHeaders) {
         try {
             logger.info("Received Get Orders Request wit count{} from_time {} to_time {} symbols{},exchange {} ,type {} ,status {} side {}",
-                    count, from_time, to_time, symbols, exchange, type, status, side);
-            List<OrderResponse> orderResponses = cryptoOrderService.getOrders(count, from_time, to_time, side, symbols, exchange, type, status);
-            return ApiResponse.success("Successfully Retrieved Order Details", orderResponses);
+                    count, fromTime, toTime, symbols, exchange, type, status, side);
+            List<OrderResponse> orderResponses = cryptoOrderService.getOrders(count, fromTime, toTime, side, symbols, exchange, type, status,httpHeaders);
+            return ResponseEntity.ok(ApiResponse.success("Successfully Retrieved Order Details", orderResponses));
         } catch (Exception ex) {
             logger.info("Exception in retrieving the Orders");
-            return ApiResponse.error("Validation Failed", ex.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("Error In Retrieving orders", ex.getMessage()));
         }
     }
 

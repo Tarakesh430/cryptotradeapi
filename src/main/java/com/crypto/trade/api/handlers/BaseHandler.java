@@ -11,4 +11,6 @@ public interface BaseHandler {
 
     <K,V> void process(HandlerContext<K,V> handlerContext) throws Exception;
 
+    String getPath();
+
 }
