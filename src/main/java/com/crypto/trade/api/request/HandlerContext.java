@@ -5,6 +5,7 @@ import com.crypto.trade.api.entity.CryptoOrder;
 import com.crypto.trade.api.response.DepthDetailsResponse;
 import com.crypto.trade.api.response.OrderResponse;
 import com.crypto.trade.api.response.PortFolioResponse;
+import com.crypto.trade.api.response.TradeDetailsResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,4 +29,5 @@ public class HandlerContext<V> implements Serializable {
     private List<OrderResponse> orderResponseList;
     private List<PortFolioResponse> portFolio;
     private DepthDetailsResponse depthDetailsResponse;
+    private List<TradeDetailsResponse> tradeDetailsResponse;
 }

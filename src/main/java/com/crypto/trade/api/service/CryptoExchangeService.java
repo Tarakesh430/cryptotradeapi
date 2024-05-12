@@ -11,6 +11,7 @@ import com.crypto.trade.api.repository.CryptoExchangeRepository;
 import com.crypto.trade.api.request.HandlerContext;
 import com.crypto.trade.api.request.KeyValidationRequest;
 import com.crypto.trade.api.response.DepthDetailsResponse;
+import com.crypto.trade.api.response.TradeDetailsResponse;
 import com.crypto.trade.api.utils.constants.CommonConstants;
 import com.crypto.trade.api.validations.KeyValidationFactory;
 import lombok.RequiredArgsConstructor;
@@ -64,12 +65,22 @@ public class CryptoExchangeService {
     }
 
     public DepthDetailsResponse getDepthDetails(String exchange, String symbol, HttpHeaders httpHeaders) throws Exception {
-        logger.info("Get Depth Details for exchange {} order {}", exchange, symbol);
+        logger.info("Get Depth Details for exchange {} symbol {}", exchange, symbol);
         BaseHandler handler = (BaseHandler) loadHandlerHelper.loadHandlerBean(exchange, "getDepthDetails");
         HandlerContext<String> handlerContext = HandlerContext.<String>builder().exchange(exchange)
                 .coins(Collections.singletonList(symbol))
                 .httpHeaders(httpHeaders).build();
         handler.process(handlerContext);
         return handlerContext.getDepthDetailsResponse();
+    }
+
+    public List<TradeDetailsResponse> getTradeDetails(String exchange, String symbol, HttpHeaders httpHeaders) throws Exception {
+        logger.info("Get Trade Details for exchange {}  symbol{}", exchange, symbol);
+        BaseHandler handler = (BaseHandler) loadHandlerHelper.loadHandlerBean(exchange, "getTradeDetails");
+        HandlerContext<String> handlerContext = HandlerContext.<String>builder().exchange(exchange)
+                .coins(Collections.singletonList(symbol))
+                .httpHeaders(httpHeaders).build();
+        handler.process(handlerContext);
+        return  handlerContext.getTradeDetailsResponse();
     }
 }
