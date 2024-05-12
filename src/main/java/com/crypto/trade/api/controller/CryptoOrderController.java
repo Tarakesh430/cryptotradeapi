@@ -1,5 +1,6 @@
 package com.crypto.trade.api.controller;
 
+import com.crypto.trade.api.exception.MyCustomException;
 import com.crypto.trade.api.request.OrderRequest;
 import com.crypto.trade.api.response.ApiResponse;
 import com.crypto.trade.api.response.OrderResponse;
@@ -31,21 +32,23 @@ public class CryptoOrderController {
             return ResponseEntity.ok(ApiResponse.success("Successfully Retrieved Order Details", orderDetails));
         } catch (Exception ex) {
             logger.info("Exception While rendering the Order Details for order Id {}", globalOrderId);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Exception in getting Order Details", ex.getMessage()));
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body(ApiResponse.error("Exception in getting Order Details", ex.getMessage()));
+            throw new MyCustomException(ex.getMessage());
         }
     }
 
     @PostMapping("/order")
-    public ApiResponse<OrderResponse> createOrder(@RequestBody OrderRequest orderRequest,
+    public ResponseEntity<ApiResponse<OrderResponse>> createOrder(@RequestBody OrderRequest orderRequest,
                                                   @RequestHeader HttpHeaders httpHeaders) {
         try {
             logger.info("Create Order for the Request {}", orderRequest);
             OrderResponse orderResponse = cryptoOrderService.placeOrder(orderRequest, httpHeaders);
-            return ApiResponse.success("Successfully Retrieved Order Details", orderResponse);
+            return ResponseEntity.ok(ApiResponse.success("Successfully Retrieved Order Details", orderResponse));
         } catch (Exception ex) {
             logger.info("Exception in executing the Order {}", orderRequest);
-            return ApiResponse.error("Validation Failed", ex.getMessage());
+            //return ApiResponse.error("Validation Failed", ex.getMessage());
+            throw new MyCustomException(ex.getMessage());
         }
     }
 
@@ -63,8 +66,9 @@ public class CryptoOrderController {
             return ResponseEntity.ok(ApiResponse.success("Successfully Retrieved Order Details", orderResponses));
         } catch (Exception ex) {
             logger.info("Exception in retrieving the Orders");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Error In Retrieving orders", ex.getMessage()));
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body(ApiResponse.error("Error In Retrieving orders", ex.getMessage()));
+            throw new MyCustomException(ex.getMessage());
         }
     }
 
@@ -77,7 +81,8 @@ public class CryptoOrderController {
             return ApiResponse.success("Successfully Retrieved Order Details", orderDetails);
         } catch (Exception ex) {
             logger.info("Exception While rendering the Order Details for exchange {} order Id {}", exchange, globalOrderId);
-            return ApiResponse.error("Validation Failed", ex.getMessage());
+            //return ApiResponse.error("Validation Failed", ex.getMessage());
+            throw new MyCustomException(ex.getMessage());
         }
     }
 }

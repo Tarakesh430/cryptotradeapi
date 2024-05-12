@@ -10,7 +10,7 @@ import java.io.Serializable;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 public class OrderResponse implements Serializable {
-    @JsonProperty("global_order_uid")
+        @JsonProperty("global_order_uid")
     private String globalOrderUid;
     @JsonProperty("order_id")
     private String orderId;
