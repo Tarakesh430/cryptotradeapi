@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
-public class PortFolio implements Serializable {
+public class PortFolioResponse implements Serializable {
     @JsonProperty("currency")
     private String currency;
 

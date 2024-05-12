@@ -12,10 +12,8 @@ import java.util.List;
 public interface OrderMapper {
 
 
-    @Mapping(target ="orderId" , source = "coinSwitchOrderResponse.orderId")
-    @Mapping(target ="createdTime",source ="coinSwitchOrderResponse.createdTime")
-    @Mapping(target ="updatedTime" ,source ="coinSwitchOrderResponse.updatedTime")
-    OrderResponse toOrderResponse(CoinSwitchOrderResponse coinSwitchOrderResponse, CryptoOrder cryptoOrder);
+
+    OrderResponse toOrderResponse(CryptoOrder coinSwitchOrderResponse);
 
     List<OrderResponse> toOrderResponse(List<CoinSwitchOrderResponse> coinSwitchOrderResponse);
 

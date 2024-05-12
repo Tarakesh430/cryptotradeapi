@@ -35,7 +35,7 @@ public class CryptoOrderService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Exchange Passed"));
         BaseHandler handler = (BaseHandler) loadHandlerHelper.loadHandlerBean(cryptoExchange.getExchangeName(), "getOrderDetails");
 
-        HandlerContext<String,String> handlerContext = HandlerContext.<String,String>builder().cryptoOrder(cryptoOrder).
+        HandlerContext<String> handlerContext = HandlerContext.<String>builder().cryptoOrder(cryptoOrder).
                 httpHeaders(httpHeaders).build();
         handler.process(handlerContext);
         return handlerContext.getOrderResponse();
@@ -47,7 +47,7 @@ public class CryptoOrderService {
         CryptoExchange cryptoExchange = cryptoExchangeRepository.findByExchangeName(orderRequest.getExchange())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Exchange Passed"));
         BaseHandler handler = (BaseHandler) loadHandlerHelper.loadHandlerBean(cryptoExchange.getExchangeName(), "createOrder");
-        HandlerContext<String,String> handlerContext = HandlerContext.<String,String>builder().orderRequest(orderRequest).
+        HandlerContext<String> handlerContext = HandlerContext.<String>builder().orderRequest(orderRequest).
                 exchange(orderRequest.getExchange()).httpHeaders(httpHeaders).build();
         handler.process(handlerContext);
         return handlerContext.getOrderResponse();
@@ -55,37 +55,40 @@ public class CryptoOrderService {
 
 
     public List<OrderResponse> getOrders(String count, String fromTime, String toTime, String side, String symbols,
-                                         String exchange, String type, String status,HttpHeaders httpHeaders) throws Exception {
+                                         String exchange, String type, String status, HttpHeaders httpHeaders) throws Exception {
         logger.info("Get Orders Request Received");
         CryptoExchange cryptoExchange = cryptoExchangeRepository.findByExchangeName(exchange)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Exchange Passed"));
         BaseHandler handler = (BaseHandler) loadHandlerHelper.loadHandlerBean(cryptoExchange.getExchangeName(), "getOrders");
         // Populate the dataMap
-        Map<String,String> dataMap = new HashMap<>();
-        dataMap.put("count",count);
-        dataMap.put("fromTime",fromTime);
-        dataMap.put("toTime",toTime);
-        dataMap.put("side",side);
-        dataMap.put("symbols",symbols);
-        dataMap.put("exchange",exchange);
-        dataMap.put("type",type);
-        dataMap.put("status",status);
-        HandlerContext<String, String> handlerContext = HandlerContext.<String, String>builder().data(dataMap)
+        Map<String, String> dataMap = new HashMap<>();
+        dataMap.put("count", count);
+        dataMap.put("fromTime", fromTime);
+        dataMap.put("toTime", toTime);
+        dataMap.put("side", side);
+        dataMap.put("symbols", symbols);
+        dataMap.put("exchange", exchange);
+        dataMap.put("type", type);
+        dataMap.put("status", status);
+        HandlerContext<String> handlerContext = HandlerContext.<String>builder().data(dataMap)
                 .httpHeaders(httpHeaders).build();
         handler.process(handlerContext);
         return handlerContext.getOrderResponseList();
     }
 
-    public OrderResponse deleteOrder(String exchange, String globalOrderId, HttpHeaders httpHeaders) throws Exception {
-        logger.info("Retrieve Crypto Order Details for Exchange {} Global Order Id {}", exchange, globalOrderId);
-        CryptoExchange cryptoExchange = cryptoExchangeRepository.findByExchangeName(exchange)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid Exchange Passed"));
+    public OrderResponse deleteOrder(String globalOrderId, HttpHeaders httpHeaders) throws Exception {
+        logger.info("Retrieve Crypto Order Details for Global Order Id {}", globalOrderId);
         CryptoOrder cryptoOrder = cryptoOrderRepository.findByGlobalOrderUid(globalOrderId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Global Order Id Passed"));
-        BaseHandler handler = (BaseHandler) loadHandlerHelper.loadHandlerBean(cryptoExchange.getExchangeName(), "deleteOrder");
+        CryptoExchange cryptoExchange = cryptoExchangeRepository.findByExchangeName(cryptoOrder.getCryptoExchange()
+                        .getExchangeName())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid Exchange Passed"));
+        BaseHandler handler = (BaseHandler) loadHandlerHelper.loadHandlerBean(cryptoExchange.getExchangeName(),
+                "deleteOrder");
 
-        HandlerContext<String,String> handlerContext = HandlerContext.<String,String>builder().cryptoOrder(cryptoOrder).
-                exchange(exchange).httpHeaders(httpHeaders).build();
+        HandlerContext<String> handlerContext = HandlerContext.<String>builder().cryptoOrder(cryptoOrder).
+                exchange(cryptoOrder.getCryptoExchange()
+                        .getExchangeName()).httpHeaders(httpHeaders).build();
         handler.process(handlerContext);
         return handlerContext.getOrderResponse();
     }

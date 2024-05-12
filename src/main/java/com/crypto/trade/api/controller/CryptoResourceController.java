@@ -2,6 +2,7 @@ package com.crypto.trade.api.controller;
 
 import com.crypto.trade.api.dto.CryptoExchangeDto;
 import com.crypto.trade.api.response.ApiResponse;
+import com.crypto.trade.api.response.DepthDetailsResponse;
 import com.crypto.trade.api.service.CryptoExchangeService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -71,5 +72,36 @@ public class CryptoResourceController {
         }
     }
 
+    @GetMapping("/depth")
+    public ResponseEntity<ApiResponse<DepthDetailsResponse>> getDepthDetails(@RequestParam("exchange") String exchange, @RequestParam("symbol") String symbol,
+                                                                             @RequestHeader HttpHeaders httpHeaders) {
+        try {
+            logger.info("GET::DEPTH DETAILS FOR EXCHANGE:: COIN");
+            logger.info("Get Depth Details for Exchange {} Symbol {}", exchange, symbol);
+            DepthDetailsResponse depthDetails = cryptoExchangeService.getDepthDetails(exchange, symbol, httpHeaders);
+            logger.info("Depth Details retrieved Successfully {}", depthDetails);
+            return ResponseEntity.ok(ApiResponse.success("Depth Details Retrieved Successfully", depthDetails));
+        } catch (Exception ex) {
+            logger.info("Exception in getting Depth Details", ex);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("Exception in Getting Depth Details", ex.getMessage()));
+        }
+    }
+
+    @GetMapping("/trade")
+    public ResponseEntity<ApiResponse<DepthDetailsResponse>> getTradeDetails(@RequestParam("exchange") String exchange, @RequestParam("symbol") String symbol,
+                                                                             @RequestHeader HttpHeaders httpHeaders) {
+        try {
+            logger.info("GET::DEPTH DETAILS FOR EXCHANGE:: COIN");
+            logger.info("Get Depth Details for Exchange {} Symbol {}", exchange, symbol);
+            DepthDetailsResponse depthDetails = cryptoExchangeService.getDepthDetails(exchange, symbol, httpHeaders);
+            logger.info("Depth Details retrieved Successfully {}", "df");
+            return ResponseEntity.ok(ApiResponse.success("Depth Details Retrieved Successfully", depthDetails));
+        } catch (Exception ex) {
+            logger.info("Exception in getting Depth Details", ex);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("Exception in Getting Depth Details", ex.getMessage()));
+        }
+    }
 
 }

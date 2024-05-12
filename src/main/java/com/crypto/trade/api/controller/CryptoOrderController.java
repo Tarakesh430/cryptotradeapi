@@ -26,7 +26,7 @@ public class CryptoOrderController {
     @GetMapping("/order")
     public ResponseEntity<ApiResponse<OrderResponse>> getOrderDetails(@RequestParam("global-order-id") String globalOrderId, @RequestHeader HttpHeaders httpHeaders) {
         try {
-            OrderResponse orderDetails = cryptoOrderService.getOrderDetails( globalOrderId, httpHeaders);
+            OrderResponse orderDetails = cryptoOrderService.getOrderDetails(globalOrderId, httpHeaders);
             logger.info("Successfully Retrieved OrderDetails for globalOrder Id {}", globalOrderId);
             return ResponseEntity.ok(ApiResponse.success("Successfully Retrieved Order Details", orderDetails));
         } catch (Exception ex) {
@@ -50,16 +50,15 @@ public class CryptoOrderController {
     }
 
     @GetMapping("/orders")
-    public ResponseEntity<ApiResponse<List<OrderResponse>>> getOrders( String count,
-                                                       String fromTime,
-                                                       String toTime,  String side,
-                                                       String symbols, @RequestParam("exchange") String exchange,
-                                                       String type,  String status,
-                                                      @RequestHeader HttpHeaders httpHeaders) {
+    public ResponseEntity<ApiResponse<List<OrderResponse>>> getOrders(String count, String fromTime, String toTime,
+                                                                      String side, String symbols, String type,
+                                                                      String status,
+                                                                      @RequestParam("exchange") String exchange,
+                                                                      @RequestHeader HttpHeaders httpHeaders) {
         try {
             logger.info("Received Get Orders Request wit count{} from_time {} to_time {} symbols{},exchange {} ,type {} ,status {} side {}",
                     count, fromTime, toTime, symbols, exchange, type, status, side);
-            List<OrderResponse> orderResponses = cryptoOrderService.getOrders(count, fromTime, toTime, side, symbols, exchange, type, status,httpHeaders);
+            List<OrderResponse> orderResponses = cryptoOrderService.getOrders(count, fromTime, toTime, side, symbols, exchange, type, status, httpHeaders);
             return ResponseEntity.ok(ApiResponse.success("Successfully Retrieved Order Details", orderResponses));
         } catch (Exception ex) {
             logger.info("Exception in retrieving the Orders");
@@ -69,15 +68,16 @@ public class CryptoOrderController {
     }
 
     @DeleteMapping("/order")
-    public ApiResponse<OrderResponse> deleteOrder(@RequestParam("exchange") String exchange,
-                                                  @RequestParam("global-order-id") String globalOrderId, @RequestHeader HttpHeaders httpHeaders) {
+    public ApiResponse<OrderResponse> deleteOrder(@RequestParam("global-order-id") String globalOrderId, @RequestHeader HttpHeaders httpHeaders) {
         try {
-            OrderResponse orderDetails = cryptoOrderService.deleteOrder(exchange, globalOrderId, httpHeaders);
-            logger.info("Successfully Retrieved OrderDetails for exchange{} globalOrder Id {}", exchange, globalOrderId);
-            return ApiResponse.success("Successfully Retrieved Order Details", orderDetails);
+            OrderResponse orderDetails = cryptoOrderService.deleteOrder(globalOrderId, httpHeaders);
+            logger.info("Deleted Order globalOrder Id {}", globalOrderId);
+            return ApiResponse.success("Successfully Deleted Order", orderDetails);
         } catch (Exception ex) {
-            logger.info("Exception While rendering the Order Details for exchange {} order Id {}", exchange, globalOrderId);
-            return ApiResponse.error("Validation Failed", ex.getMessage());
+            logger.info("Exception in deleting Order {}", globalOrderId);
+            return ApiResponse.error("Order Deletion Failed", ex.getMessage());
         }
     }
+
+
 }

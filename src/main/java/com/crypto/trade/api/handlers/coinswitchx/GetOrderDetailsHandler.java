@@ -1,6 +1,7 @@
 package com.crypto.trade.api.handlers.coinswitchx;
 
 import com.crypto.trade.api.entity.CryptoOrder;
+import com.crypto.trade.api.enums.OrderStatus;
 import com.crypto.trade.api.handlers.BaseHandler;
 import com.crypto.trade.api.mapper.OrderMapper;
 import com.crypto.trade.api.request.HandlerContext;
@@ -35,7 +36,7 @@ public class GetOrderDetailsHandler implements BaseHandler {
     @Value("${coinswitch.trade.api.baseUrl}")
     private String baseUrl;
 
-    public <K,V> void process(HandlerContext<K, V> handlerContext) throws Exception {
+    public <V> void process(HandlerContext< V> handlerContext) throws Exception {
         CryptoOrder cryptoOrder = handlerContext.getCryptoOrder();
 
         HttpHeaders httpHeaders = handlerContext.getHttpHeaders();
@@ -62,9 +63,16 @@ public class GetOrderDetailsHandler implements BaseHandler {
                     handlerContext.getExchange(), cryptoOrder.getOrderId(), path);
             throw new Exception("Exception in getting Order Details for Order Id " + cryptoOrder.getOrderId());
         }
-        handlerContext.setOrderResponse(orderMapper.toOrderResponse(response.getData(), cryptoOrder));
+        updateCryptoOrder(cryptoOrder,response.getData());
+        handlerContext.setOrderResponse(orderMapper.toOrderResponse(cryptoOrder));
     }
 
+    private void updateCryptoOrder(CryptoOrder cryptoOrder, CoinSwitchOrderResponse body) {
+        cryptoOrder.setStatus(OrderStatus.fromString(body.getStatus()));
+        cryptoOrder.setExecutedQty(String.valueOf(body.getExecutedQty()));
+        cryptoOrder.setUpdatedTime(body.getUpdatedTime());
+        cryptoOrder.setOrderSource(body.getOrderSource());
+    }
     public String getPath() {
         return "/trade/api/v2/order";
     }

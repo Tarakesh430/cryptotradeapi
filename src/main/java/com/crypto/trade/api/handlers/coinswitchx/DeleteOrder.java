@@ -1,45 +1,47 @@
 package com.crypto.trade.api.handlers.coinswitchx;
 
 import com.crypto.trade.api.entity.CryptoOrder;
+import com.crypto.trade.api.enums.OrderStatus;
 import com.crypto.trade.api.handlers.BaseHandler;
 import com.crypto.trade.api.mapper.OrderMapper;
 import com.crypto.trade.api.repository.CryptoOrderRepository;
 import com.crypto.trade.api.request.HandlerContext;
-import com.crypto.trade.api.response.Response;
 import com.crypto.trade.api.response.coinswitch.CoinSwitchOrderResponse;
 import com.crypto.trade.api.security.SignatureGeneration;
 import com.crypto.trade.api.utils.constants.CommonConstants;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestTemplate;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+
 
 @Component("coinswitchx_deleteOrder")
 @RequiredArgsConstructor
 public class DeleteOrder implements BaseHandler {
 
     private final Logger logger = LoggerFactory.getLogger(DeleteOrder.class);
-
-    private final RestClient restClient;
+    private final RestTemplate restTemplate;
     private final SignatureGeneration coinSwitchSignatureGeneration;
     private final OrderMapper orderMapper;
-    private final CryptoOrderRepository cryptoOrderRepository;
+    private final ObjectMapper objectMapper;
+    private final CryptoOrderRepository  cryptoOrderRepository;
+
 
     @Value("${coinswitch.trade.api.baseUrl}")
     private String baseUrl;
 
     @Override
-    public <K,V> void process(HandlerContext<K,V> handlerContext) throws Exception {
+    public <V> void process(HandlerContext<V> handlerContext) throws Exception {
         CryptoOrder cryptoOrder = handlerContext.getCryptoOrder();
 
         HttpHeaders httpHeaders = handlerContext.getHttpHeaders();
@@ -48,25 +50,39 @@ public class DeleteOrder implements BaseHandler {
 
         logger.info("Cancel Order for Order Id {}", cryptoOrder.getOrderId());
         String path = getPath();
-        path = path.concat("?order_id=" + URLEncoder.encode(cryptoOrder.getOrderId(), StandardCharsets.UTF_8));
+
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("order_id", cryptoOrder.getOrderId());
         String signature = coinSwitchSignatureGeneration.generateSignature(secretKey, HttpMethod.DELETE.name(),
-                path, new HashMap<>(), new HashMap<>());
-        Response<CoinSwitchOrderResponse> response = null;
+                path, payload, new HashMap<>());
+        ResponseEntity<CoinSwitchOrderResponse> response = null;
         try {
-            response = restClient.delete().uri(baseUrl.concat(path))
-                    .header(CommonConstants.CS_AUTH_SIGNATURE, signature)
-                    .header(CommonConstants.CS_AUTH_APIKEY, apiKey)
-                    .retrieve().body(new ParameterizedTypeReference<>() {
-                    });
+
+            HttpHeaders requestHeaders = new HttpHeaders();
+            requestHeaders.set(CommonConstants.CS_AUTH_SIGNATURE, signature);
+            requestHeaders.set(CommonConstants.CS_AUTH_APIKEY, apiKey);
+            requestHeaders.set("Content-Type", "application/json");
+            HttpEntity<String> entity = new HttpEntity<>(objectMapper.writeValueAsString(payload), requestHeaders);
+            response = restTemplate.exchange(baseUrl.concat(path), HttpMethod.DELETE, entity, new ParameterizedTypeReference<CoinSwitchOrderResponse>() {
+            });
         } catch (Exception ex) {
             logger.info("Exception ex {}", ex.getMessage());
         }
-        if (Objects.isNull(response) || Objects.isNull(response.getData())) {
+        if (Objects.isNull(response) || Objects.isNull(response.getBody())) {
             logger.error("Exception in getting Order Details for Exchange {}  Order Id {} path {}",
                     handlerContext.getExchange(), cryptoOrder.getOrderId(), path);
             throw new Exception("Exception in getting Order Details for Order Id " + cryptoOrder.getOrderId());
         }
-        handlerContext.setOrderResponse(orderMapper.toOrderResponse(response.getData(), cryptoOrder));
+        updateCryptoOrder(cryptoOrder,response.getBody());
+        cryptoOrderRepository.save(cryptoOrder);
+        handlerContext.setOrderResponse(orderMapper.toOrderResponse(cryptoOrder));
+    }
+
+    private void updateCryptoOrder(CryptoOrder cryptoOrder, CoinSwitchOrderResponse body) {
+        cryptoOrder.setStatus(OrderStatus.fromString(body.getStatus()));
+        cryptoOrder.setExecutedQty(String.valueOf(body.getExecutedQty()));
+        cryptoOrder.setUpdatedTime(body.getUpdatedTime());
+        cryptoOrder.setOrderSource(body.getOrderSource());
     }
 
     @Override
