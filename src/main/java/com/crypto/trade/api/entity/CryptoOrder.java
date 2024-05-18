@@ -1,5 +1,7 @@
 package com.crypto.trade.api.entity;
 
+import com.crypto.trade.api.enums.OrderStatus;
+import com.crypto.trade.api.enums.Side;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,6 +22,17 @@ public class CryptoOrder implements Serializable {
     @Column(name = "uid", unique = true)
     private String globalOrderUid;
     private String orderId;
+    private String symbol;
+    private String price;
+    private String averagePrice;
+    private String originalQty;
+    private String executedQty;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
+    @Enumerated(EnumType.STRING)
+    private Side side;
+    private String orderSource;
+
     private Long createdTime;
     private Long updatedTime;
 

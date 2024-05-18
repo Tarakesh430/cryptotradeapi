@@ -1,6 +1,5 @@
 package com.crypto.trade.api.handlers.coinswitchx;
 
-import com.crypto.trade.api.enums.OrderStatus;
 import com.crypto.trade.api.enums.Side;
 import com.crypto.trade.api.handlers.BaseHandler;
 import com.crypto.trade.api.mapper.OrderMapper;
@@ -29,7 +28,7 @@ import java.util.Objects;
 
 @Component("coinswitchx_getOrders")
 @RequiredArgsConstructor
-public class GetOrders implements BaseHandler {
+public class GetOrdersHandler implements BaseHandler {
     Logger logger = LoggerFactory.getLogger(GetOrderDetailsHandler.class);
 
     private final RestClient restClient;
@@ -39,7 +38,7 @@ public class GetOrders implements BaseHandler {
     @Value("${coinswitch.trade.api.baseUrl}")
     private String baseUrl;
 
-    public <K,V> void process(HandlerContext<K,V>  handlerContext) throws Exception {
+    public <V> void process(HandlerContext<V>  handlerContext) throws Exception {
 
 
         HttpHeaders httpHeaders = handlerContext.getHttpHeaders();

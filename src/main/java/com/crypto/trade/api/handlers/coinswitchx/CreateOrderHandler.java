@@ -8,6 +8,7 @@ import com.crypto.trade.api.repository.CryptoExchangeRepository;
 import com.crypto.trade.api.repository.CryptoOrderRepository;
 import com.crypto.trade.api.request.HandlerContext;
 import com.crypto.trade.api.request.OrderRequest;
+import com.crypto.trade.api.response.OrderResponse;
 import com.crypto.trade.api.response.Response;
 import com.crypto.trade.api.response.coinswitch.CoinSwitchOrderResponse;
 import com.crypto.trade.api.security.SignatureGeneration;
@@ -51,7 +52,7 @@ public class CreateOrderHandler implements BaseHandler {
     private String baseUrl;
 
     @Override
-    public <K,V> void process(HandlerContext<K,V> handlerContext) throws Exception {
+    public <V> void process(HandlerContext<V> handlerContext) throws Exception {
         OrderRequest orderRequest = handlerContext.getOrderRequest();
 
         HttpHeaders httpHeaders = handlerContext.getHttpHeaders();
@@ -97,9 +98,10 @@ public class CreateOrderHandler implements BaseHandler {
             throw new Exception("Exception in placing Order ");
         }
         CryptoOrder cryptoOrder = cryptoOrderHelper.createCryptoOrder(response.getData());
-        cryptoOrder.setCryptoExchange(cryptoExchangeRepository.findByExchangeName(orderRequest.getExchange()).orElse(null));
+        cryptoOrder.setCryptoExchange(cryptoExchangeRepository.findByExchangeName(orderRequest.getExchange())
+                .orElse(null));
         cryptoOrderRepository.save(cryptoOrder);
-        handlerContext.setOrderResponse(orderMapper.toOrderResponse(response.getData(),cryptoOrder));
+        handlerContext.setOrderResponse(orderMapper.toOrderResponse(cryptoOrder));
     }
     @Override
     public String getPath() {

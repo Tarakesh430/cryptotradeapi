@@ -1,14 +1,9 @@
 package com.crypto.trade.api.service;
 
-import com.crypto.trade.api.entity.CryptoExchange;
-import com.crypto.trade.api.entity.CryptoOrder;
 import com.crypto.trade.api.handlers.BaseHandler;
 import com.crypto.trade.api.handlers.LoadHandlerHelper;
-import com.crypto.trade.api.repository.CryptoExchangeRepository;
-import com.crypto.trade.api.repository.CryptoOrderRepository;
 import com.crypto.trade.api.request.HandlerContext;
-import com.crypto.trade.api.response.OrderResponse;
-import com.crypto.trade.api.response.PortFolio;
+import com.crypto.trade.api.response.PortFolioResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,11 +19,11 @@ public class PortFolioService {
     private final Logger logger = LoggerFactory.getLogger(PortFolioService.class);
     private final LoadHandlerHelper loadHandlerHelper;
 
-    public List<PortFolio> getPortFolioDetails(String exchange, HttpHeaders httpHeaders) throws Exception {
+    public List<PortFolioResponse> getPortFolioDetails(String exchange, HttpHeaders httpHeaders) throws Exception {
         //Check for the Exchange is available
         logger.info("Get PortFolio Details for Exchange {}",exchange);
         BaseHandler handler = (BaseHandler) loadHandlerHelper.loadHandlerBean(exchange, "getPortFolio");
-        HandlerContext<String,String> handlerContext = HandlerContext.<String,String>builder().
+        HandlerContext<String> handlerContext = HandlerContext.<String>builder().
                 exchange(exchange).httpHeaders(httpHeaders).build();
         handler.process(handlerContext);
         return handlerContext.getPortFolio();
