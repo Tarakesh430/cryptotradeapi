@@ -27,9 +27,9 @@ import java.util.Objects;
 
 @Component("coinswitchx_deleteOrder")
 @RequiredArgsConstructor
-public class DeleteOrder implements BaseHandler {
+public class DeleteOrderHandler implements BaseHandler {
 
-    private final Logger logger = LoggerFactory.getLogger(DeleteOrder.class);
+    private final Logger logger = LoggerFactory.getLogger(DeleteOrderHandler.class);
     private final RestTemplate restTemplate;
     private final SignatureGeneration coinSwitchSignatureGeneration;
     private final OrderMapper orderMapper;
@@ -43,7 +43,9 @@ public class DeleteOrder implements BaseHandler {
     @Override
     public <V> void process(HandlerContext<V> handlerContext) throws Exception {
         CryptoOrder cryptoOrder = handlerContext.getCryptoOrder();
-
+       if(Objects.isNull(cryptoOrder)){
+           throw new Exception("Crypto Order not populated");
+       }
         HttpHeaders httpHeaders = handlerContext.getHttpHeaders();
         String secretKey = httpHeaders.getFirst(CommonConstants.SECRET_KEY_HEADER);
         String apiKey = httpHeaders.getFirst(CommonConstants.API_KEY_HEADER);
@@ -69,9 +71,9 @@ public class DeleteOrder implements BaseHandler {
             logger.info("Exception ex {}", ex.getMessage());
         }
         if (Objects.isNull(response) || Objects.isNull(response.getBody())) {
-            logger.error("Exception in getting Order Details for Exchange {}  Order Id {} path {}",
+            logger.error("Exception in deleting Order in exchange {} order Id {}, Path {}",
                     handlerContext.getExchange(), cryptoOrder.getOrderId(), path);
-            throw new Exception("Exception in getting Order Details for Order Id " + cryptoOrder.getOrderId());
+            throw new Exception("Exception in deleting Order Id " + cryptoOrder.getOrderId());
         }
         updateCryptoOrder(cryptoOrder,response.getBody());
         cryptoOrderRepository.save(cryptoOrder);
