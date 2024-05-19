@@ -1,6 +1,8 @@
 package com.crypto.trade.api.controller;
 
+import ch.qos.logback.classic.spi.IThrowableProxy;
 import com.crypto.trade.api.dto.CryptoExchangeDto;
+import com.crypto.trade.api.exception.MyCustomException;
 import com.crypto.trade.api.response.ApiResponse;
 import com.crypto.trade.api.response.DepthDetailsResponse;
 import com.crypto.trade.api.response.TradeDetailsResponse;
@@ -36,8 +38,7 @@ public class CryptoResourceController {
                     cryptoExchangeService.getAllCryptoExchanges()));
         } catch (Exception ex) {
             logger.error("The exception for retrieving Crypto Exchanges ", ex);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Error in retrieving Crypto Exchanges", ex.getMessage()));
+            throw new MyCustomException(ex.getMessage());
         }
     }
 
@@ -63,14 +64,14 @@ public class CryptoResourceController {
     }
 
     @GetMapping("/active-coins")
-    public ApiResponse<List<String>> getActiveCoins(@RequestParam("exchange") String exchange, @RequestHeader HttpHeaders httpHeaders) {
+    public ResponseEntity<ApiResponse<List<String>>> getActiveCoins(@RequestParam("exchange") String exchange, @RequestHeader HttpHeaders httpHeaders) throws Exception {
         try {
             logger.info("GET :: ACTIVE CRYPTO EXCHANGES :: LIST");
-            return ApiResponse.success("Successfully Retrieved Crypto Exchanges",
-                    cryptoExchangeService.getAllActiveCoins(exchange, httpHeaders));
+         return ResponseEntity.ok(ApiResponse.success("Successfully Retrieved Crypto Exchanges",
+                 cryptoExchangeService.getAllActiveCoins(exchange, httpHeaders)));
         } catch (Exception ex) {
             logger.error("The exception for retrieving Crypto Exchanges ", ex);
-            return ApiResponse.error("Error in retrieving Crypto Exchanges", ex.getMessage());
+             throw new MyCustomException(ex.getMessage());
         }
     }
 
