@@ -65,7 +65,7 @@ public class DeleteOrderHandler implements BaseHandler {
             requestHeaders.set(CommonConstants.CS_AUTH_APIKEY, apiKey);
             requestHeaders.set("Content-Type", "application/json");
             HttpEntity<String> entity = new HttpEntity<>(objectMapper.writeValueAsString(payload), requestHeaders);
-            response = restTemplate.exchange(baseUrl.concat(path), HttpMethod.DELETE, entity, new ParameterizedTypeReference<CoinSwitchOrderResponse>() {
+            response = restTemplate.exchange(baseUrl.concat(path), HttpMethod.DELETE, entity, new ParameterizedTypeReference<>() {
             });
         } catch (Exception ex) {
             logger.info("Exception ex {}", ex.getMessage());

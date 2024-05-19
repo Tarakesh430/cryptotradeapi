@@ -25,15 +25,13 @@ public class CryptoOrderController {
     private final CryptoOrderService cryptoOrderService;
 
     @GetMapping("/order")
-    public ResponseEntity<ApiResponse<OrderResponse>> getOrderDetails(@RequestParam("global-order-id") String globalOrderId, @RequestHeader HttpHeaders httpHeaders) {
+    public ResponseEntity<ApiResponse<OrderResponse>> getOrderDetails(@RequestParam("global-order-id") String globalOrderId, @RequestHeader HttpHeaders httpHeaders) throws Exception {
         try {
             OrderResponse orderDetails = cryptoOrderService.getOrderDetails(globalOrderId, httpHeaders);
             logger.info("Successfully Retrieved OrderDetails for globalOrder Id {}", globalOrderId);
             return ResponseEntity.ok(ApiResponse.success("Successfully Retrieved Order Details", orderDetails));
         } catch (Exception ex) {
             logger.info("Exception While rendering the Order Details for order Id {}", globalOrderId);
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body(ApiResponse.error("Exception in getting Order Details", ex.getMessage()));
             throw new MyCustomException(ex.getMessage());
         }
     }

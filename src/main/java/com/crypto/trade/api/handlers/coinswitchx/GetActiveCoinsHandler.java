@@ -14,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
+
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -48,9 +49,9 @@ public class GetActiveCoinsHandler implements BaseHandler {
                 path, new HashMap<>(), new HashMap<>());
         Response<Map<String, List<String>>> response = null;
         try {
-             response = restClient.get().uri(baseUrl.concat(path))
+            response = restClient.get().uri(baseUrl.concat(path))
                     .header(CommonConstants.CS_AUTH_SIGNATURE, signature)
-                     .header(CommonConstants.CS_AUTH_APIKEY, apiKey)
+                    .header(CommonConstants.CS_AUTH_APIKEY, apiKey)
                     .retrieve().body(new ParameterizedTypeReference<>() {
                     });
         } catch (Exception ex) {
