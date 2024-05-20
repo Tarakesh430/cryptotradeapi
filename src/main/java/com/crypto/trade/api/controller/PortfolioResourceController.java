@@ -1,5 +1,6 @@
 package com.crypto.trade.api.controller;
 
+import com.crypto.trade.api.exception.MyCustomException;
 import com.crypto.trade.api.response.ApiResponse;
 import com.crypto.trade.api.response.PortFolioResponse;
 import com.crypto.trade.api.service.PortFolioService;
@@ -12,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static com.crypto.trade.api.utils.constants.CommonConstants.Const_Exception;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,8 +31,7 @@ public class PortfolioResourceController {
                     portFolioService.getPortFolioDetails(exchange,httpHeaders)));
         } catch (Exception ex) {
             logger.error("The exception for retrieving PortFolio Details ", ex);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Error in retrieving Port Folio Details", ex.getMessage()));
+            throw new MyCustomException("error while retrieving the Portfolio Details"+Const_Exception+ex.getMessage());
         }
     }
 }

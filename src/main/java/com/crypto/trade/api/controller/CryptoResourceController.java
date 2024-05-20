@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+import static com.crypto.trade.api.utils.constants.CommonConstants.Const_Exception;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/cryptotrade")
@@ -38,7 +40,7 @@ public class CryptoResourceController {
                     cryptoExchangeService.getAllCryptoExchanges()));
         } catch (Exception ex) {
             logger.error("The exception for retrieving Crypto Exchanges ", ex);
-            throw new MyCustomException(ex.getMessage());
+            throw new MyCustomException("Error while retrieving the Crypto Exchange"+Const_Exception+ex.getMessage());
         }
     }
 
@@ -59,7 +61,7 @@ public class CryptoResourceController {
             return ResponseEntity.ok(ApiResponse.success("Validation Successfull", null));
         } catch (Exception ex) {
             logger.info("Validation Failed with Exception", ex);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error("Validation Failed", ex.getMessage()));
+            throw new MyCustomException("Validation Failed"+Const_Exception+ex.getMessage());
         }
     }
 
@@ -71,7 +73,7 @@ public class CryptoResourceController {
                  cryptoExchangeService.getAllActiveCoins(exchange, httpHeaders)));
         } catch (Exception ex) {
             logger.error("The exception for retrieving Crypto Exchanges ", ex);
-             throw new MyCustomException(ex.getMessage());
+             throw new MyCustomException("Error while retrieving Crypto Exchanges"+Const_Exception+ex.getMessage());
         }
     }
 
@@ -86,8 +88,7 @@ public class CryptoResourceController {
             return ResponseEntity.ok(ApiResponse.success("Depth Details Retrieved Successfully", depthDetails));
         } catch (Exception ex) {
             logger.info("Exception in getting Depth Details", ex);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Exception in Getting Depth Details", ex.getMessage()));
+            throw new MyCustomException("Exception in getting Depth Details"+Const_Exception+ex.getMessage());
         }
     }
 
@@ -103,8 +104,7 @@ public class CryptoResourceController {
             return ResponseEntity.ok(ApiResponse.success("Trade Details Retrieved Successfully", tradeDetails));
         } catch (Exception ex) {
             logger.info("Exception in getting Trade Details", ex);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Exception in Getting Trade Details", ex.getMessage()));
+            throw new MyCustomException("Error while getting the Trade Details"+Const_Exception+ex.getMessage());
         }
     }
 
