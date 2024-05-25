@@ -12,5 +12,5 @@ public class CommonConstants {
     public static final String SECRET_KEY_HEADER = "X-SECRET-KEY";
     public static final String API_KEY_HEADER = "X-API-KEY";
     public static final Integer ACTIVE = 1 ;
-    public static final String Const_Exception="##";
+
 }

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.crypto.trade.api.utils.constants.CommonConstants.Const_Exception;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -31,7 +31,7 @@ public class PortfolioResourceController {
                     portFolioService.getPortFolioDetails(exchange,httpHeaders)));
         } catch (Exception ex) {
             logger.error("The exception for retrieving PortFolio Details ", ex);
-            throw new MyCustomException("error while retrieving the Portfolio Details"+Const_Exception+ex.getMessage());
+            throw new MyCustomException("error while retrieving the Portfolio Details");
         }
     }
 }

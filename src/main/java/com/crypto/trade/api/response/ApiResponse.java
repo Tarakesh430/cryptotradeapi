@@ -50,7 +50,7 @@ public class ApiResponse<T> {
         return new ApiResponse<>(STATUS_SUCCESS, message, data);
     }
 
-    public static <T> ApiResponse<T> error(String message, String exMessage) {
+    public static <T> ApiResponse<T> error(String message) {
         return new ApiResponse<>(STATUS_ERROR, message, null);
     }
 }

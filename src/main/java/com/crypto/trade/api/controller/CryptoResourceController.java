@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-import static com.crypto.trade.api.utils.constants.CommonConstants.Const_Exception;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,7 +39,7 @@ public class CryptoResourceController {
                     cryptoExchangeService.getAllCryptoExchanges()));
         } catch (Exception ex) {
             logger.error("The exception for retrieving Crypto Exchanges ", ex);
-            throw new MyCustomException("Error while retrieving the Crypto Exchange"+Const_Exception+ex.getMessage());
+            throw new MyCustomException("Error while retrieving the Crypto Exchange");
         }
     }
 
@@ -61,7 +60,7 @@ public class CryptoResourceController {
             return ResponseEntity.ok(ApiResponse.success("Validation Successfull", null));
         } catch (Exception ex) {
             logger.info("Validation Failed with Exception", ex);
-            throw new MyCustomException("Validation Failed"+Const_Exception+ex.getMessage());
+            throw new MyCustomException("Validation Failed");
         }
     }
 
@@ -73,7 +72,7 @@ public class CryptoResourceController {
                  cryptoExchangeService.getAllActiveCoins(exchange, httpHeaders)));
         } catch (Exception ex) {
             logger.error("The exception for retrieving Crypto Exchanges ", ex);
-             throw new MyCustomException("Error while retrieving Crypto Exchanges"+Const_Exception+ex.getMessage());
+             throw new MyCustomException("Error while retrieving Crypto Exchanges");
         }
     }
 
@@ -88,7 +87,7 @@ public class CryptoResourceController {
             return ResponseEntity.ok(ApiResponse.success("Depth Details Retrieved Successfully", depthDetails));
         } catch (Exception ex) {
             logger.info("Exception in getting Depth Details", ex);
-            throw new MyCustomException("Exception in getting Depth Details"+Const_Exception+ex.getMessage());
+            throw new MyCustomException("Exception in getting Depth Details");
         }
     }
 
@@ -104,7 +103,7 @@ public class CryptoResourceController {
             return ResponseEntity.ok(ApiResponse.success("Trade Details Retrieved Successfully", tradeDetails));
         } catch (Exception ex) {
             logger.info("Exception in getting Trade Details", ex);
-            throw new MyCustomException("Error while getting the Trade Details"+Const_Exception+ex.getMessage());
+            throw new MyCustomException("Error while getting the Trade Details");
         }
     }
 

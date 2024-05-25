@@ -12,6 +12,6 @@ public class GlobalExceptionHandler extends RuntimeException{
     {
         String message=ex.getMessage().substring(0,ex.getMessage().indexOf("#"));
        String Exception=ex.getMessage().substring(ex.getMessage().lastIndexOf("#"));
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(message,Exception));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(message));
     }
 }

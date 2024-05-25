@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.crypto.trade.api.utils.constants.CommonConstants.Const_Exception;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -36,7 +36,7 @@ public class CryptoOrderController {
             logger.info("Exception While rendering the Order Details for order Id {}", globalOrderId);
 //            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 //                    .body(ApiResponse.error("Exception in getting Order Details", ex.getMessage()));
-            throw new MyCustomException("Error while retirving the Order Details"+Const_Exception+ex.getMessage());
+            throw new MyCustomException("Error while retirving the Order Details");
         }
     }
 
@@ -50,7 +50,7 @@ public class CryptoOrderController {
         } catch (Exception ex) {
             logger.info("Exception in executing the Order {}", orderRequest);
             //return ApiResponse.error("Validation Failed", ex.getMessage());
-            throw new MyCustomException("Error while placing the Order"+Const_Exception+ex.getMessage());
+            throw new MyCustomException("Error while placing the Order");
         }
     }
 
@@ -69,7 +69,7 @@ public class CryptoOrderController {
             logger.info("Exception in retrieving the Orders");
 //            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 //                    .body(ApiResponse.error("Error In Retrieving orders", ex.getMessage()));
-            throw new MyCustomException("Error while getting the orders"+Const_Exception+ex.getMessage());
+            throw new MyCustomException("Error while getting the orders");
         }
     }
 
@@ -82,7 +82,7 @@ public class CryptoOrderController {
         } catch (Exception ex) {
             logger.info("Exception While rendering the Order Details for exchange {} order Id {}", ex, globalOrderId);
             //return ApiResponse.error("Validation Failed", ex.getMessage());
-            throw new MyCustomException("Error while deleting  the order"+Const_Exception+ex.getMessage());
+            throw new MyCustomException("Error while deleting  the order");
         }
     }
 
